@@ -959,7 +959,7 @@ function morphsearch_apachesolr_index_document_build_node(ApacheSolrDocument $do
   // TODO duplicate code
   // add taxonomy IDs of associated research results to projects
   // (projects can be found by morphological terms of associated research results)
-  if ($entity->type === 'projekt') {
+  if ($entity->type === 'projekt' and node_type_load('forschungsergebnis') != FALSE) {
     $array_tids = array();
 
     // get IDs of all associated research results
