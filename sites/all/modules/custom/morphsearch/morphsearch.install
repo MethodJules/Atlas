@@ -28,17 +28,15 @@ function morphsearch_schema() {
       ),
       'input' => array(
         'description' => 'The saved search input.',
-        'type' => 'varchar',
-        'length' => 10000,
+        'type' => 'text',
+        'size' => 'big',
         'not null' => TRUE,
-        'default' => '',
       ),
       'url' => array(
          'description' => 'The full search URL.',
-         'type' => 'varchar',
-         'length' => 20000,
+         'type' => 'text',
+         'size' => 'big',
          'not null' => TRUE,
-         'default' => '',
       ),
       'timestamp' => array(
         'description' => 'The timestamp.',
