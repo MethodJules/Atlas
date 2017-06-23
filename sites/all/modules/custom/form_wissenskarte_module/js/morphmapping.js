@@ -694,7 +694,7 @@ Indeko.MorphBox.convertMorphsearch = function() {
     Indeko.MorphBox.reset();
 	Indeko.Morphsearch.elemBlock.addClass('knowledgemap');											// add class for knowledgemap block styling
     Indeko.ImageMap.contentBlockLabel.text(Drupal.t("Knowledge Map Content"));						// change label of the search block
-	$('.block-region-sidebar-first.block-user-menu').hide();																// hide others blocks in forst sidebar
+	$('.block-region-sidebar-first #block-system-user-menu').hide();																// hide others blocks in forst sidebar
 	$('.morphblocktable').remove();                                                 				// remove standard search block search / reset / save elements
 	Indeko.MorphBox.selects.change(Indeko.MorphBox.getSelectedValuesFromMorphBox);  				// changelistener for comboboxes in MorpBox
 	Indeko.MorphBox.searchTypeBlock.click(Indeko.MorphBox.getSelectedValuesFromMorphBox);			// clickevent for Inhaltstypen
