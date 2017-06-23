@@ -41,7 +41,7 @@ function morphsearch_block_view($delta = '') {
     case 'morphsearch-block':
       //drupal_add_js(drupal_get_path('module', 'morphsearch') . "/js/morphsearch.js", array('scope' => 'footer'));
 
-      //$block['subject'] = t('Morphsearch Block');
+      $block['subject'] = t('Portal Search');
       $block['content'] = createMorphsearchContent();
 
       // Attach morphsearch CSS to block.
@@ -85,7 +85,7 @@ function createMorphsearchContent() {
   // fulltext search element
   $content['fulltextsearch'] = array(
     '#type' => 'textfield',
-    '#title' => t('Portal Search'),
+    '#title' => '',
     '#attributes' => array(
       'class' => array('morphsearch-fulltext'),
       'id' => 'fulltextsearch',
