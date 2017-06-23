@@ -34,7 +34,7 @@ var ValidationResult = function() {
  */
 Indeko.ImageMap = Indeko.ImageMap || {
 		scalingFactor: 1,
-		contentBlockLabel:	$('#fulltextsearchrow').find('label'),
+		contentBlockLabel:	$('#block-morphsearch-morphsearch-block').find('.block-title'),
 		elemTags: $('#edit-field-tag-combined-und'),
 		buttonSave: $('#edit-submit'),
 		elemTitle: $("#edit-title"),
@@ -692,7 +692,9 @@ Indeko.MorphBox.hide = function() {
 Indeko.MorphBox.convertMorphsearch = function() {
     Indeko.MorphBox.searchJson = JSON.stringify(Indeko.Morphsearch.toArray());                      // save search block state to restore it later
     Indeko.MorphBox.reset();
-	Indeko.ImageMap.contentBlockLabel.text(Drupal.t("Knowledge Map Content"));					// change label of the search block
+	Indeko.Morphsearch.elemBlock.addClass('knowledgemap');											// add class for knowledgemap block styling
+    Indeko.ImageMap.contentBlockLabel.text(Drupal.t("Knowledge Map Content"));						// change label of the search block
+	$('.block-region-sidebar-first.block-user-menu').hide();																// hide others blocks in forst sidebar
 	$('.morphblocktable').remove();                                                 				// remove standard search block search / reset / save elements
 	Indeko.MorphBox.selects.change(Indeko.MorphBox.getSelectedValuesFromMorphBox);  				// changelistener for comboboxes in MorpBox
 	Indeko.MorphBox.searchTypeBlock.click(Indeko.MorphBox.getSelectedValuesFromMorphBox);			// clickevent for Inhaltstypen
