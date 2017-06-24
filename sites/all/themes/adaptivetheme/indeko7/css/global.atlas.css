@@ -92,6 +92,11 @@ div.messages {
     font-size: 21px;
 }
 
+/* Icon size on knowledge map search result block */
+.block .view-knowledgemap-searchresults .icon {
+    padding-left: 24px;
+}
+
 /* Icon size on user menu */
 .user-profile .elementsoverview .icon {
     padding-left: 20px;
@@ -229,6 +234,15 @@ div.messages {
  */
 #exportcsv {
     float: right;
+}
+
+/*
+ * Truncate long labels in knowledge map search result block
+ */
+.view-knowledgemap-searchresults .views-field-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* =============================================================================
@@ -466,9 +480,8 @@ img[src*="Logo_PT_DLR_deutsch_neu.jpg"] {
     top: 50%;
     transform: translate(0, -50%);
     max-height: 70%;
-    z-index: 99999;
+    z-index: 9000;
     overflow: auto;
-    padding-right: 20px;
 }
 
 /* overflow scrollbar does not reduce block content width*/
