@@ -220,7 +220,7 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'indeko',
+      'database' => 'indekoatlas',
       'username' => 'root',
       'password' => '',
       'host' => 'localhost',
