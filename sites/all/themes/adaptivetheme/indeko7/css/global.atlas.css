@@ -489,6 +489,13 @@ img[src*="Logo_PT_DLR_deutsch_neu.jpg"] {
     width: 224px;
 }
 
+/* Highlight block after drawing is finsihed */
+.block-morphsearch.drawfinished {
+    border-color: #2da046 !important;
+    border: 3px;
+    border-style: solid;
+}
+
 
 /* =============================================================================
     Responsive Design

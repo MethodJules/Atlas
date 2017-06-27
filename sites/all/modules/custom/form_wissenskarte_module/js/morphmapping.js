@@ -616,6 +616,13 @@ function gui_updateArea(id) {
 function gui_statusMessage(str) {
 	var statusArea = $('.form-item-field-wk-bild-und-0').find('label');
 
+	// add class to morphbox block after drawing ends
+	if (str === myimgmap.strings.READY) {
+        Indeko.MorphBox.element.addClass('drawfinished');
+	} else {
+        Indeko.MorphBox.element.removeClass('drawfinished');
+    }
+
 	// status strings not loaded properly
 	if (typeof str == 'undefined') {
 		myimgmap.loadStrings(imgmapStrings);
@@ -670,6 +677,9 @@ Indeko.MorphBox.selectItems = function() {
 Indeko.MorphBox.reset = function() {
 	Indeko.Morphsearch.reset();
 	Indeko.Morphsearch.elemFulltext.val(''); // ID 34 do not reset fulltext field on reset, so have to do it here
+
+	// Remove class on morphbox block
+    Indeko.MorphBox.element.removeClass('drawfinished');
 };
 
 /**
