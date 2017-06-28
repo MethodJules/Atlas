@@ -315,9 +315,6 @@ div.messages {
     width: 70%;
 }
 
-.img_area .chosen-container-single {
-    width: 20%;
-}
 
 /* Prevent knowledge map from being selectable and draggable to prevent input accidents */
 .unselectable {
