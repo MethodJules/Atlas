@@ -245,6 +245,14 @@ div.messages {
     text-overflow: ellipsis;
 }
 
+/*
+ * Display related search links side by side
+ */
+.related-search dd {
+    display: inline;
+}
+
+
 /* =============================================================================
     Content type Projekt
    ========================================================================== */
