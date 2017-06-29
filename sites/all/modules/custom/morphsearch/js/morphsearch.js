@@ -304,7 +304,7 @@ Indeko.Morphsearch.toSearchblock = function(searchArray) {
     if (searchArray.fulltext === '*') {
         Indeko.Morphsearch.elemFulltext.val('');
     } else {
-        Indeko.Morphsearch.elemFulltext.val(decodeURI(searchArray.fulltext));
+        Indeko.Morphsearch.elemFulltext.val((decodeURI(searchArray.fulltext).replace(/^\(\(\(|\)\)\)$/g, '')));
     }
 
 
@@ -507,7 +507,8 @@ Indeko.Morphsearch.toUrl = function (searchArray) {
  */
 Indeko.Morphsearch.convertToSolrString = function (fulltext) {
     var solrString = '';
-    solrString = fulltext;
+    // Mark the full text string to be able to identify it later.
+    solrString = '(((' + fulltext + ')))';
 
     // replace "|" by Solr or "||"
     solrString = solrString.replace(/\||%7C/gi, '||');

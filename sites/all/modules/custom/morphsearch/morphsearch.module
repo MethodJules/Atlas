@@ -992,8 +992,10 @@ function morphsearch_apachesolr_query_alter(DrupalSolrQueryInterface $query) {
   //$query->addParam('defType', 'dismax');
   /*$query->replaceParam('q.op', 'AND');
   $query->addParam('q.alt', '*:*');
-  $query->addParam('fl', '*');
-  $query->removeParam('mm');*/
+  $query->addParam('fl', '*');*/
+
+  // Only return results that match 100% of the search keywords.
+  $query->replaceParam('mm', '100%');
 }
 
 /**
