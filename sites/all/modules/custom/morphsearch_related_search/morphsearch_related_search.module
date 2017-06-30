@@ -38,8 +38,19 @@ function morphsearch_related_search_apachesolr_search_page_alter(array &$build, 
 
         // Create related search links.
         $links = array();
+        $searchData = morphsearch_get_search_template();
+
         foreach($relatedKeywords as $key=>$relatedKeyword) {
-          $links[$key] = l($relatedKeyword, $search_page['search_path'] . '/' . $relatedKeyword);
+          $searchData['fulltext'] = $relatedKeyword;
+          $searchJson = (drupal_json_encode($searchData));
+
+          // Link with title, path and additional attributes
+          $links[$key] = l($relatedKeyword,
+                      $search_page['search_path'] . '/(((' . $relatedKeyword . ')))',
+                            array('attributes' => array(
+                              'class' => array('searchResultLink'),
+                              'data-input' => $searchJson,
+                            )));
         }
 
         // Add related search links on top of the search page.

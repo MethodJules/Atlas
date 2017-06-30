@@ -62,6 +62,12 @@ function morphsearch_block_view($delta = '') {
         'scope' => 'footer',
       );
 
+      // Attach search template for javascript functions to use.
+      $block['content']['#attached']['js'][] = array(
+        'type' => 'setting',
+        'data' => array('morphsearch' => array('searchTemplate' => drupal_json_encode(morphsearch_get_search_template()))),
+      );
+
       break;
   }
   // add qtip2 library to display search syntax as a tooltip
@@ -992,11 +998,36 @@ function morphsearch_apachesolr_query_alter(DrupalSolrQueryInterface $query) {
   //$query->addParam('defType', 'dismax');
   /*$query->replaceParam('q.op', 'AND');
   $query->addParam('q.alt', '*:*');
-  $query->addParam('fl', '*');*/
-
-  // Only return results that match 100% of the search keywords.
-  $query->replaceParam('mm', '100%');
+  $query->addParam('fl', '*');
+  $query->removeParam('mm');*/
 }
+
+
+/**
+ * Provides an empty template to store search parameters. The associative array
+ * represents the available search parameter structure of the morphsearch block.
+ *
+ * @return array
+ *   Associative array of available search parameters.
+ */
+function morphsearch_get_search_template() {
+  $searchArray = array(
+    'fulltext' => '',
+    'morphological' => array(),
+    'type' => array(),
+    'publication' => array(
+      'year' => array(),
+      'author' => array(),
+      'tags' => array(),
+      'publisher' => array(),
+      'location' => array(),
+      'type' => array(),
+    ),
+  );
+
+  return $searchArray;
+}
+
 
 /**
  * Implements hook_help().
