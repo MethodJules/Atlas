@@ -171,7 +171,7 @@ Indeko.Morphsearch.hookMorphologicalSearchToggle = function() {
  */
 Indeko.Morphsearch.hookSearchResultsButtons = function() {
     Indeko.Morphsearch.buttonsSearchResults.click(function() {
-        localStorage["searchValues"] = $(this).attr('data-input');
+        localStorage["searchValues"] = decodeURI($(this).attr('data-input'));
     });
 };
 
@@ -208,19 +208,7 @@ Indeko.Morphsearch.reset = function() {
 Indeko.Morphsearch.toArray = function() {
 
     // search object structure (imitating an associative array) that can be easily converted to and from JSON
-    var searchArray = {
-        fulltext: '',
-        morphological: [],
-        type: [],
-        publication: {
-            year: [],
-            author: [],
-            tags: [],
-            publisher: [],
-            location: [],
-            type: []
-        }
-    };
+    var searchArray = JSON.parse(Drupal.settings.morphsearch.searchTemplate);
 
     var isPublicationSelected = false;
 
@@ -509,6 +497,9 @@ Indeko.Morphsearch.convertToSolrString = function (fulltext) {
     var solrString = '';
     // Mark the full text string to be able to identify it later.
     solrString = '(((' + fulltext + ')))';
+
+    // replace forward slashes so they don't mess with Drupal menu paths
+    solrString = solrString.replace(/\//g, ' ');
 
     // replace "|" by Solr or "||"
     solrString = solrString.replace(/\||%7C/gi, '||');
