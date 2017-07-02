@@ -237,6 +237,21 @@ div.messages {
 }
 
 /*
+ * Display related search links side by side
+ */
+.related-search dd {
+    display: inline;
+}
+
+/* =============================================================================
+    Knowledgemap Search Results Block
+   ========================================================================== */
+/* Hide the exposed AJAX widget */
+#views-exposed-form-knowledgemap-searchresults-block {
+    display: none;
+}
+
+/*
  * Truncate long labels in knowledge map search result block
  */
 .view-knowledgemap-searchresults .views-field-label {
@@ -244,14 +259,6 @@ div.messages {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-/*
- * Display related search links side by side
- */
-.related-search dd {
-    display: inline;
-}
-
 
 /* =============================================================================
     Content type Projekt

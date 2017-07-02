@@ -856,12 +856,27 @@ Indeko.ImageMap.hookSaveButton = function () {
  * Updates search block on click on map areas.
  */
 Indeko.ImageMap.hookMapAreas = function () {
-	$("map area").click(function () {
-			jsonString = decodeURI($(this).attr('data-json'));
-			localStorage["searchValues"] = jsonString;
-		}
-	)
+    $("map area").click(function () {
+        jsonString = decodeURI($(this).attr('data-json'));
+        localStorage["searchValues"] = jsonString;
+
+        // If search results should be displayed in the AJAX block view besides the knowledge map
+        if ($('.view-knowledgemap-searchresults').length) {
+            // Get search parameters and execute the AJAX call.
+            var searchObject = JSON.parse(jsonString);
+            $('#edit-keyword').val(Indeko.Morphsearch.toQuery(searchObject));
+            $('#edit-submit-knowledgemap-searchresults').click();
+
+            // Update morphsearch block search.
+            Indeko.Morphsearch.reset();
+            Indeko.Morphsearch.toSearchblock(searchObject);
+
+            // Don't follow the clicked href link.
+            return false;
+        } // Otherwise just follow the href search link provided by the map area and go to the search result page.
+    })
 };
+
 
 /**
  * Adds a new area to the image map.

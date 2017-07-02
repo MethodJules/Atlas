@@ -423,14 +423,13 @@ Indeko.Morphsearch.styleSearchResults = function() {
 };
 
 /**
- * Converts the search object (@see toArray) to an Apache Solr search URL.
- * -> /indeko/search/site/Kompetenz AND tid:(38 AND 40) AND bundle:(wissenskarte OR analysereport)
+ * Converts the search object (@see toArray) to an Apache Solr query string.
+ * -> Kompetenz AND tid:(38 AND 40) AND bundle:(wissenskarte OR analysereport)
  *
  * @param searchArray Object containing all user-selected search values.
- * @return {string} Complete search URL in string format.
+ * @return {string} Solr search query in string format.
  */
-Indeko.Morphsearch.toUrl = function (searchArray) {
-    var baseSolrSearchUrl = Drupal.settings.basePath + Drupal.settings.morphsearch.searchPath + "/";
+Indeko.Morphsearch.toQuery = function (searchArray) {
     var solrSearchQuery = "";
 
     // fulltext search (just carry over)
@@ -473,7 +472,7 @@ Indeko.Morphsearch.toUrl = function (searchArray) {
         // if publication filters were set, update biblio restrictions in search
         if(pubQuery !== '') {
             /* CR ID 67-1 If publication was not selected but publication filters were set, search for all content types
-            and filtered publications. TODO Has to be updated once more types are added to search ... */
+             and filtered publications. TODO Has to be updated once more types are added to search ... */
             if (biblionotselected) {
                 solrSearchQuery = solrSearchQuery.replace('biblionotselected',
                     'analysereport OR forschungsergebnis OR projekt OR wissenskarte OR (biblio ' + pubQuery + ')');
@@ -483,9 +482,25 @@ Indeko.Morphsearch.toUrl = function (searchArray) {
         }
     }
 
+    return solrSearchQuery;
+};
+
+
+/**
+ * Converts the search object (@see toArray) to an Apache Solr search URL.
+ * -> /indeko/search/site/Kompetenz AND tid:(38 AND 40) AND bundle:(wissenskarte OR analysereport)
+ *
+ * @param searchArray Object containing all user-selected search values.
+ * @return {string} Complete search URL in string format.
+ */
+Indeko.Morphsearch.toUrl = function (searchArray) {
+    var baseSolrSearchUrl = Drupal.settings.basePath + Drupal.settings.morphsearch.searchPath + "/";
+    var solrSearchQuery = Indeko.Morphsearch.toQuery(searchArray);
+
     var solrSearchUrl = baseSolrSearchUrl + solrSearchQuery;
     return solrSearchUrl;
 };
+
 
 /**
  * Converts the portal's search syntax to constructs and fields Apache Solr can process.
