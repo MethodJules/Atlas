@@ -21,11 +21,14 @@
 
             settings.jq_maphilight.options = options;
 
+            /* Attach only once on page load to prevent issues with AJAX calls.
+             * Without once() any AJAX call on the same page as a knowledgemap, would cause maphilight(...) to rebuild the
+             * whole image and highlighting. */
             if (settings.jq_maphilight.allMapsEnabled == 'true') {
-                $('img[usemap]').maphilight(options);       // apply options to all image maps
+                $('img[usemap]').once('jq_maphilight').maphilight(options);       // apply options to all image maps
             }
             else {
-                $('.jq_maphilight').maphilight(options);    // apply options to image maps of class "jq_maphilight" only
+                $('.jq_maphilight').once('jq_maphilight').maphilight(options);    // apply options to image maps of class "jq_maphilight" only
             }
 
             // Use additional highlighting settings for mouseover if highlighting is always on.
