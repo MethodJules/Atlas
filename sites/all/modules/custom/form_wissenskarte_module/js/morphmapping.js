@@ -111,6 +111,12 @@ function  initView(ViewMode) {
 				l_oPicContainer.find('img').attr('USEMAP', l_sId);
 			}
 
+            // TODO initial search block message
+            if ($('#block-views-searchresults-block').length) {
+                $('#block-views-searchresults-block .view-content').empty();
+                $('#block-views-searchresults-block .view-content').text(Drupal.t('Click on a shape of the knowledge map.'));
+            }
+
 			Indeko.ImageMap.hookMapAreas();
 
             // hook button to show hide map areas, if enabled [ID 103]
@@ -857,15 +863,15 @@ Indeko.ImageMap.hookSaveButton = function () {
  */
 Indeko.ImageMap.hookMapAreas = function () {
     $("map area").click(function () {
-        jsonString = decodeURI($(this).attr('data-json'));
+        jsonString = decodeURI(decodeURI($(this).attr('data-json')));
         localStorage["searchValues"] = jsonString;
 
         // If search results should be displayed in the AJAX block view besides the knowledge map
-        if ($('.view-knowledgemap-searchresults').length) {
+        if ($('#block-views-searchresults-block').length) {
             // Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
             $('#edit-keyword').val(Indeko.Morphsearch.toQuery(searchObject));
-            $('#edit-submit-knowledgemap-searchresults').click();
+            $('#edit-submit-searchresults').click();
 
             // Update morphsearch block search.
             Indeko.Morphsearch.reset();

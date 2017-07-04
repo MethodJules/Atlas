@@ -93,15 +93,10 @@ div.messages {
 }
 
 /* Icon size on knowledge map search result block */
-.block .view-knowledgemap-searchresults .icon {
+#block-views-searchresults-block .icon {
     padding-left: 24px;
 }
 
-/* Fixed height 50% of viewport */
-.block .view-knowledgemap-searchresults {
-    height: 50vh;
-    overflow-y: auto;
-}
 
 /* Icon size on user menu */
 .user-profile .elementsoverview .icon {
@@ -253,18 +248,25 @@ div.messages {
     Knowledgemap Search Results Block
    ========================================================================== */
 /* Hide the exposed AJAX widget */
-#views-exposed-form-knowledgemap-searchresults-block {
+#views-exposed-form-searchresults-block {
     display: none;
 }
 
 /*
  * Truncate long labels in knowledge map search result block
  */
-.view-knowledgemap-searchresults .views-field-label {
+#block-views-searchresults-block .views-field-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* Fixed height of content region, title fixed */
+#block-views-searchresults-block .block-content {
+    overflow-y: auto;
+    height: 45vh;
+}
+
 
 /* =============================================================================
     Content type Projekt
