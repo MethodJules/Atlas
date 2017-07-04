@@ -97,6 +97,12 @@ div.messages {
     padding-left: 24px;
 }
 
+/* Fixed height 50% of viewport */
+.block .view-knowledgemap-searchresults {
+    height: 50vh;
+    overflow-y: auto;
+}
+
 /* Icon size on user menu */
 .user-profile .elementsoverview .icon {
     padding-left: 20px;
