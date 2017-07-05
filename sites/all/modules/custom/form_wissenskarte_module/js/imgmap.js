@@ -1599,7 +1599,7 @@ imgmap.prototype._repaint = function(area, color, x, y) {
 	var i, le;//loop counter
 	if (area.shape == 'circle') {
 		width  = parseInt(area.style.width, 10);
-		var radius = Math.floor(width/2) - 1;
+		var radius = Math.round(width/2) - 1;
 		if (radius < 0) {
 			radius=0;
         }
@@ -1722,7 +1722,7 @@ imgmap.prototype._updatecoords = function(id) {
 		this.areas[id].lastInput = value;
 	}
 	else if (this.areas[id].shape == 'circle') {
-		var radius = Math.floor(width/2) - 1;
+		var radius = Math.round(width/2);
 		value = (left + radius) + ',' +	(top + radius) + ',' + radius;
 		this.areas[id].lastInput = value;
 	}
@@ -2175,7 +2175,7 @@ imgmap.prototype.img_mousedown = function(e) {
 	var y = (this.isMSIE) ? (window.event.y - this.pic.offsetTop)  : (e.pageY - pos.y);
 	x = x + this.pic_container.scrollLeft;
 	y = y + this.pic_container.scrollTop;
-	
+
 	// Handle the Shift state
 	if (!e) {
 		e = window.event;

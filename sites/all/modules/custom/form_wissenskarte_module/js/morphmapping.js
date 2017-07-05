@@ -113,8 +113,7 @@ function  initView(ViewMode) {
 
             // TODO initial search block message
             if ($('#block-views-searchresults-block').length) {
-                $('#block-views-searchresults-block .view-content').empty();
-                $('#block-views-searchresults-block .view-content').text(Drupal.t('Click on a shape of the knowledge map.'));
+                $('#block-views-searchresults-block').find('.view-empty').text(Drupal.t('Click on a shape of the knowledge map.'));
             }
 
 			Indeko.ImageMap.hookMapAreas();
