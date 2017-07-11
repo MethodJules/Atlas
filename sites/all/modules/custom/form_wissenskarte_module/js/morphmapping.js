@@ -862,15 +862,22 @@ Indeko.ImageMap.hookSaveButton = function () {
  */
 Indeko.ImageMap.hookMapAreas = function () {
     $("map area").click(function () {
-        jsonString = decodeURI(decodeURI($(this).attr('data-json')));
-        localStorage["searchValues"] = jsonString;
+    	var elemBlockSearchresults = $('#block-views-searchresults-block');
 
         // If search results should be displayed in the AJAX block view besides the knowledge map
-        if ($('#block-views-searchresults-block').length) {
-            // Get search parameters and execute the AJAX call.
+        if (elemBlockSearchresults.length) {
+            var jsonString = decodeURI(decodeURI($(this).attr('data-json')));
+            localStorage["searchValues"] = jsonString;
+
+        	// Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
             $('#edit-keyword').val(Indeko.Morphsearch.toQuery(searchObject));
             $('#edit-submit-searchresults').click();
+
+            // Update block title with area title.
+            // Use "alt" instead of "title" to prevent problems with qTip2 library editing "title" attribute.
+            var areaTitle = decodeURI(decodeURI($(this).attr('alt')));
+            elemBlockSearchresults.find('.block-title').text(areaTitle);
 
             // Update morphsearch block search.
             Indeko.Morphsearch.reset();
