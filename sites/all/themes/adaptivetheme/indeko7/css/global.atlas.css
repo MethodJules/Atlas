@@ -319,26 +319,6 @@ div.messages {
     Content type Wissenskarte
    ========================================================================== */
 
-/* span element to show / hide areas on click [ID 103] */
-#button_hightlight {
-    background-color: #444;
-    padding: 0.3em;
-    color: #fff;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-#button_hightlight:hover {
-    background-color: #666;
-    cursor: pointer;
-}
-
-/* Area title width */
-.img_alt {
-    width: 70%;
-}
-
 /* Shape selector width */
 .img_shape {
     width: 120px;

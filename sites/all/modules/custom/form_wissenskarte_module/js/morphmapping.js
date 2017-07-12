@@ -164,8 +164,11 @@ function instanciateAreaDescription(){
 
 	// TODO: edit content type wissenskarte to add div wrapper around image for clear identification
 	var guiArea = $('#edit-field-wk-bild');
+	var textHideAreas = Drupal.t("Hide areas");
+	var textShowAreas = Drupal.t("Show areas");
 
-	guiArea.prepend('<div id="addAreaButton" class="addAreaButton" value="" />');
+	guiArea.prepend('<span class="inline-block"><div id="addAreaButton" class="addAreaButton" value="" />' +
+    				'<div id="button-hide" class="area-show">' + textHideAreas + '</div></span>');
 	guiArea.prepend('<label id="addAreaError" class="labelAreaErrorText" />');
 	guiArea.prepend('<div id="areadescription"></div>');
 
@@ -181,7 +184,42 @@ function instanciateAreaDescription(){
 			Indeko.MorphBox.reset();
 		}
 	});
+
+    // Hide/show drawn canvas areas on click.
+	var btnHide = $('#button-hide');
+    btnHide.click(function () {
+
+    	// Hide
+        if(btnHide.hasClass("area-show")) {
+            btnHide.toggleClass("area-show");
+            btnHide.text(textShowAreas);
+            Indeko.ImageMap.toggleCanvas(true);
+
+        // Show
+        } else {
+            btnHide.toggleClass("area-show");
+            btnHide.text(textHideAreas);
+            Indeko.ImageMap.toggleCanvas(false);
+        }
+    });
 }
+
+/**
+ * Toggles the visibility of drawn knowledge map areas.
+ *
+ * @param {boolean} hide TRUE if areas should be hidden, otherwise FALSE.
+ */
+Indeko.ImageMap.toggleCanvas = function (hide) {
+    var image = $('.pic_container');
+
+    if (hide === true) {
+        image.find('canvas').addClass('canvas-hidden');
+        image.find('.imgmap_label').addClass('canvas-hidden');
+	} else if (hide === false) {
+        image.find('canvas').removeClass('canvas-hidden');
+        image.find('.imgmap_label').removeClass('canvas-hidden');
+	}
+};
 
 /*
  * Highlights knowledge map form elements that failed the validation and displays warning messages.
@@ -457,6 +495,13 @@ function gui_row_select(id, setfocus, multiple) {
 	}
 	//put highlight on actual props row
 	props[id].style.background = '#e7e7e7';
+
+	// Reset areas
+    $('.pic_container').find('canvas').removeClass('canvas-top');
+
+	// Bring selected area to top
+	var cssId = myimgmap.getMapName() + 'area' + id;
+	$('#' + cssId).removeClass('canvas-hidden').addClass('canvas-top');
 }
 
 /**
@@ -867,7 +912,6 @@ Indeko.ImageMap.hookMapAreas = function () {
         // If search results should be displayed in the AJAX block view besides the knowledge map
         if (elemBlockSearchresults.length) {
             var jsonString = decodeURI(decodeURI($(this).attr('data-json')));
-            localStorage["searchValues"] = jsonString;
 
         	// Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
@@ -894,7 +938,12 @@ Indeko.ImageMap.hookMapAreas = function () {
  * Adds a new area to the image map.
  */
 Indeko.ImageMap.addNewArea = function () {
-	myimgmap.addNewArea();
+    myimgmap.addNewArea();
+
+    // Hide all previously drawn areas if user has chosen to hide all (but the currently active) areas.
+    if ($('#button-hide').not(".area-show")) {
+		Indeko.ImageMap.toggleCanvas(true);
+    }
 };
 
 /**

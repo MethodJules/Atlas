@@ -64,9 +64,54 @@
     display: none;
 }
 
+/* Hide areas button inline */
+#edit-field-wk-bild .inline-block > * {
+    display: inline-block;
+}
+
+/* element to show / hide areas on click [ID 103] */
+#button_hightlight,
+#button-hide {
+    background-color: #444;
+    padding: 0.3em;
+    color: #fff;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#button_hightlight:hover,
+#button-hide:hover {
+    background-color: #666;
+    cursor: pointer;
+}
+#button-hide {
+    margin-left: 3em;
+}
+
+/* Area title width */
+.img_alt {
+    width: 70%;
+}
+
 /*
  * Hide tags on knowledge map.
  */
 #edit-field-tag-combined {
     display: none;
+}
+
+/* Bring selected area to top (knowledge map create/edit mode) */
+.canvas-top {
+    z-index: 100 !important; /* has priority over canvas-hidden */
+}
+
+/* Hide drawn areas behind the knowledge map image (knowledge map create/edit mode)*/
+.canvas-hidden {
+    z-index: -1;
+}
+
+/* Border around image during knowledge map create/edit */
+.pic_container img {
+    border: 1px solid #ccc;
 }
