@@ -499,6 +499,11 @@ function gui_row_select(id, setfocus, multiple) {
 	// Reset areas
     $('.pic_container').find('canvas').removeClass('canvas-top');
 
+    // Hide all previously drawn areas if user has chosen to hide all (but the currently active) areas.
+    if ($('#button-hide').not(".area-show")) {
+        Indeko.ImageMap.toggleCanvas(true);
+    }
+
 	// Bring selected area to top
 	var cssId = myimgmap.getMapName() + 'area' + id;
 	$('#' + cssId).removeClass('canvas-hidden').addClass('canvas-top');

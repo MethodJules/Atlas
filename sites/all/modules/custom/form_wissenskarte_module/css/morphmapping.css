@@ -115,3 +115,11 @@
 .pic_container img {
     border: 1px solid #ccc;
 }
+
+/* Prevent text select on knowledge map elements */
+.pic_container * {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
