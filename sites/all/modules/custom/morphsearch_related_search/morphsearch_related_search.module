@@ -112,7 +112,7 @@ function theme_related_search_links($variables) {
   $output = '<div class="related-search">';
   $output .= '<dl class="form-item"><dt><strong>';
   // TODO prototype msg
-  $output .= '(Statischer Prototyp) ' . t('Related searches for') . ' ' . $variables['fullTextKeyword'] . ': ';
+  $output .= '(Statischer Prototyp) ' . t('Related searches for') . ' ' . check_plain($variables['fullTextKeyword']) . ': ';
   $output .= '</strong></dt>';
 
   foreach ((array) $variables['links'] as $link) {

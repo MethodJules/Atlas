@@ -98,35 +98,37 @@ function form_wissenskarte_module_field_widget_image_image_form_alter(&$element,
  * Implements hook_node_view_alter().
  * Adds an html element (to be used as a "button") to knowledge maps to show / hide image map areas
  * if the jq_maphilight module is installed. [ID 103]
+ * Insert html rendered knowledge map html code.
  *
  * @param $build: A renderable array representing the node content.
  */
 function form_wissenskarte_module_node_view_alter(&$build) {
-  if (module_exists('jq_maphilight')) {
+  // Don't display on comment pages.
+  $pathComment = 'comment/reply/*';
+  $isPathComment = drupal_match_path(current_path(), $pathComment);
 
-    // Don't display on comment pages.
-    $pathComment = 'comment/reply/*';
-    $isPathComment = drupal_match_path(current_path(), $pathComment);
+  if ($build['#node']->type === 'wissenskarte' && $build['#view_mode'] === 'full' && !$isPathComment) {
+    // Insert the knowledge map code as rendered html instead of html escaped text.
+    $build['field_markierte_bereiche'][0]['#markup'] = $build['field_markierte_bereiche']['#items'][0]['value'];
 
-    if ($build['#node']->type === 'wissenskarte' && $build['#view_mode'] === 'full' && !$isPathComment) {
-
+    if (module_exists('jq_maphilight')) {
       // Set "button" text that can be accessed in js and translated in Drupal.
       $stringAreaShow = t("Show areas");
       $stringAreaHide = t("Hide areas");
 
       // can be accessed in js through Drupal.setting.form_wissenskarte_module
-      drupal_add_js(array(
-        'form_wissenskarte_module' => array(
+      drupal_add_js([
+        'form_wissenskarte_module' => [
           'stringAreaShow' => $stringAreaShow,
           'stringAreaHide' => $stringAreaHide,
-        )
-      ), array('type' => 'setting', 'scope' => 'footer', 'weight' => 99));
+        ]
+      ], ['type' => 'setting', 'scope' => 'footer', 'weight' => 99]);
 
 
-      $build['#node']->content['button_highlight'] = array(
+      $build['#node']->content['button_highlight'] = [
         '#markup' => '<div><span id="button_hightlight" class="areashow">' . $stringAreaShow . '</span></div>',
         '#weight' => 0,
-      );
+      ];
     }
   }
 }
@@ -143,7 +145,22 @@ function form_wissenskarte_module_node_presave($node) {
 
   // Strip all tags except those relevant to knowledge maps: "map" and "area".
   if ($node->type === 'wissenskarte') {
-    $knowledgemap_html = $node->field_markierte_bereiche['und']['0']['value'];
-    $node->field_markierte_bereiche['und']['0']['value'] = strip_tags($knowledgemap_html, '<map><area>');
+    $knowledgemapHtml = $node->field_markierte_bereiche['und']['0']['value'];
+    $node->field_markierte_bereiche['und']['0']['value'] = strip_tags($knowledgemapHtml, '<map><area>');
+  }
+}
+
+/**
+ * Implements hook_node_validate().
+ * Checks for valid knowledge map html code. Should only fail is someone tries to
+ * manipulate the client side validation process.
+ */
+function form_wissenskarte_module_node_validate($node, $form, &$form_state) {
+  // Check if map code starts with '<map' and ends with '</map> and that there is no additional code in front or after it.
+  if ($node->form_id === 'wissenskarte_node_form') {
+    $knowledgemapHtml = $node->field_markierte_bereiche['und']['0']['value'];
+    if (preg_match( '/^<map.+<\/map>$/', $knowledgemapHtml) !== 1) {
+      form_set_error('Knowledge Map', t('Invalid knowledege map html code.'));
+    }
   }
 }

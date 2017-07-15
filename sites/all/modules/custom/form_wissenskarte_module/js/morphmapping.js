@@ -98,16 +98,16 @@ function  initView(ViewMode) {
 			var div = $(parent[0]).parent();
 			myimgmap = {};
 
-			// load areas
-			var loadedValue = $($(".field-name-field-markierte-bereiche").children()[1]).text();
-			var l_oPicContainer = $('.field-type-image').find('div');
-			if (loadedValue != "" && l_oPicContainer.length === 1) $(loadedValue).appendTo(l_oPicContainer);
+			// load areas (not needed anymore, map html added properly on server side)
+			//var loadedValue = $($(".field-name-field-markierte-bereiche").children()[1]).text();
+			//if (loadedValue != "" && l_oPicContainer.length === 1) $(loadedValue).appendTo(l_oPicContainer);
 
 			Indeko.ImageMap.addTooltip();
 
 			// read map id and attach to image
-			if (l_oPicContainer.find('map').length === 1) {
-				var l_sId = '#' + l_oPicContainer.find('map').attr('id');
+            var l_oPicContainer = $('.field-type-image').find('div');
+            if ($('.field-name-field-markierte-bereiche').find('map').length === 1) {
+				var l_sId = '#' + $('.field-name-field-markierte-bereiche').find('map').attr('id');
 				l_oPicContainer.find('img').attr('USEMAP', l_sId);
 			}
 
@@ -923,7 +923,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 
         // If search results should be displayed in the AJAX block view besides the knowledge map
         if (elemBlockSearchresults.length) {
-            var jsonString = decodeURI(decodeURI($(this).attr('data-json')));
+            var jsonString = decodeURI($(this).attr('data-json'));
 
         	// Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
@@ -932,7 +932,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 
             // Update block title with area title.
             // Use "alt" instead of "title" to prevent problems with qTip2 library editing "title" attribute.
-            var areaTitle = decodeURI(decodeURI($(this).attr('alt')));
+            var areaTitle = decodeURI($(this).attr('alt'));
             elemBlockSearchresults.find('.block-title').text(areaTitle);
 
             // Update morphsearch block search.
@@ -1043,17 +1043,18 @@ Indeko.ImageMap.hookButtonHighlighting = function() {
 	});
 };
 
-var entityMap = {
-	"&": "&amp;",
-	"<": "&lt;",
-	">": "&gt;",
-	'"': '&quot;',
-	"'": '&#39;',
-	"/": '&#x2F;'
-};
-
 function escapeHtml(string) {
-	return String(string).replace(/[&<>"'\/]/g, function (s) {
+    var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+
+    // Escape only quotation marks as they could break the client side generated map html code.
+    return String(string).replace(/["']/g, function (s) {
 		return entityMap[s];
 	});
 }
@@ -1095,12 +1096,13 @@ imgmap.prototype.getMapInnerHTML = function(flags) {
 					coords = cs.join(',');
 				}
 				html+= '<area shape="' + this.areas[i].shape + '"' +
-					' alt="' + this.areas[i].aalt + '"' +
-					' title="' + this.areas[i].atitle + '"' +
+                    // Escape user input title. It may containt characters that break qTip2 tooltip module (e.g. quotation marks).
+                    ' alt="' + escapeHtml(this.areas[i].aalt) + '"' +
+					' title="' + escapeHtml(this.areas[i].atitle) + '"' +
 					' id="' + this.areas[i].id + '"' +
 					' coords="' + coords + '"' +
 					' href="' +	this.areas[i].ahref + '"' +
-					'data-json="' + this.areas[i].json + '"' +
+					' data-json="' + escapeHtml(this.areas[i].json) + '"' +
 					' target="' + this.areas[i].atarget + '" />';
 			}
 		}
