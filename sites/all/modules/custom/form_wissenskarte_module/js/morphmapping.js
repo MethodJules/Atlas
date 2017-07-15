@@ -193,23 +193,23 @@ function instanciateAreaDescription(){
         if(btnHide.hasClass("area-show")) {
             btnHide.toggleClass("area-show");
             btnHide.text(textShowAreas);
-            Indeko.ImageMap.toggleCanvas(true);
+            Indeko.ImageMap.setCanvasVisibility(true);
 
         // Show
         } else {
             btnHide.toggleClass("area-show");
             btnHide.text(textHideAreas);
-            Indeko.ImageMap.toggleCanvas(false);
+            Indeko.ImageMap.setCanvasVisibility(false);
         }
     });
 }
 
 /**
- * Toggles the visibility of drawn knowledge map areas.
+ * Sets the visibility of drawn knowledge map areas.
  *
  * @param {boolean} hide TRUE if areas should be hidden, otherwise FALSE.
  */
-Indeko.ImageMap.toggleCanvas = function (hide) {
+Indeko.ImageMap.setCanvasVisibility = function (hide) {
     var image = $('.pic_container');
 
     if (hide === true) {
@@ -219,6 +219,16 @@ Indeko.ImageMap.toggleCanvas = function (hide) {
         image.find('canvas').removeClass('canvas-hidden');
         image.find('.imgmap_label').removeClass('canvas-hidden');
 	}
+};
+
+/**
+ * Checks the status of the hide area button and sets canvas visibility accordingly.
+ */
+Indeko.ImageMap.updateCanvasVisibility = function () {
+    // Hide all previously drawn areas if user has chosen to hide all (but the currently active) areas.
+    if (!$('#button-hide').is(".area-show")) {
+        Indeko.ImageMap.setCanvasVisibility(true);
+    }
 };
 
 /*
@@ -499,10 +509,7 @@ function gui_row_select(id, setfocus, multiple) {
 	// Reset areas
     $('.pic_container').find('canvas').removeClass('canvas-top');
 
-    // Hide all previously drawn areas if user has chosen to hide all (but the currently active) areas.
-    if ($('#button-hide').not(".area-show")) {
-        Indeko.ImageMap.toggleCanvas(true);
-    }
+    Indeko.ImageMap.updateCanvasVisibility();
 
 	// Bring selected area to top
 	var cssId = myimgmap.getMapName() + 'area' + id;
@@ -945,10 +952,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 Indeko.ImageMap.addNewArea = function () {
     myimgmap.addNewArea();
 
-    // Hide all previously drawn areas if user has chosen to hide all (but the currently active) areas.
-    if ($('#button-hide').not(".area-show")) {
-		Indeko.ImageMap.toggleCanvas(true);
-    }
+    Indeko.ImageMap.updateCanvasVisibility();
 };
 
 /**
