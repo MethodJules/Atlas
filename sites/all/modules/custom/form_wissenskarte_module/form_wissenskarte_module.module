@@ -117,18 +117,18 @@ function form_wissenskarte_module_node_view_alter(&$build) {
       $stringAreaHide = t("Hide areas");
 
       // can be accessed in js through Drupal.setting.form_wissenskarte_module
-      drupal_add_js([
-        'form_wissenskarte_module' => [
+      drupal_add_js(array(
+        'form_wissenskarte_module' => array(
           'stringAreaShow' => $stringAreaShow,
           'stringAreaHide' => $stringAreaHide,
-        ]
-      ], ['type' => 'setting', 'scope' => 'footer', 'weight' => 99]);
+        )
+      ), array('type' => 'setting', 'scope' => 'footer', 'weight' => 99));
 
 
-      $build['#node']->content['button_highlight'] = [
+      $build['#node']->content['button_highlight'] = array(
         '#markup' => '<div><span id="button_hightlight" class="areashow">' . $stringAreaShow . '</span></div>',
         '#weight' => 0,
-      ];
+      );
     }
   }
 }

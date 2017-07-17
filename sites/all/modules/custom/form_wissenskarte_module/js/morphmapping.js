@@ -923,7 +923,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 
         // If search results should be displayed in the AJAX block view besides the knowledge map
         if (elemBlockSearchresults.length) {
-            var jsonString = decodeURI($(this).attr('data-json'));
+            var jsonString = decodeURI(decodeURI($(this).attr('data-json')));
 
         	// Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
