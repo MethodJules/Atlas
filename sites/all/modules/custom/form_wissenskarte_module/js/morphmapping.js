@@ -927,6 +927,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 
         	// Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
+            searchObject.fulltext = decodeURI(searchObject.fulltext);
             $('#edit-keyword').val(Indeko.Morphsearch.toQuery(searchObject));
             $('#edit-submit-searchresults').click();
 
