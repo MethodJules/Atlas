@@ -1040,15 +1040,3 @@ function morphsearch_help($path, $arg) {
       return module_exists('markdown') ? filter_xss_admin(module_invoke('markdown', 'filter', 'process', 0, -1, $readme)) : '<pre>' . check_plain($readme) . '</pre>';
   }
 }
-
-
-/**
- * Implements hook_form_FORM_ID_alter().
- * Removes the limitation to 128 characters for the 'keyword' textfield.
- * (Only on the search results block that is displayed besides knowledge maps.)
- */
-function form_wissenskarte_module_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-  if ($form['#id'] === 'views-exposed-form-searchresults-block') {
-    $form['keyword']['#maxlength'] = null;
-  }
-}

@@ -713,7 +713,7 @@ Indeko.MorphBox.update = function(id) {
 	}
 
 	var jsonString = myimgmap.areas[id].json;
-	jsonString = decodeURI(jsonString);
+	//jsonString = decodeURI(jsonString);
 	var searchObject = JSON.parse(jsonString);
 	Indeko.Morphsearch.toSearchblock(searchObject);
 	Indeko.MorphBox.selectItems();
@@ -727,7 +727,7 @@ Indeko.MorphBox.selectItems = function() {
 
 	// todo testing 18.10
 	var jsonString = myimgmap.areas[myimgmap.currentid].json;
-	jsonString = decodeURI(jsonString);
+	//jsonString = decodeURI(jsonString);
 	var searchObject = JSON.parse(jsonString);
 	Indeko.Morphsearch.toSearchblock(searchObject);
 };
@@ -779,7 +779,7 @@ Indeko.MorphBox.getSelectedValuesFromMorphBox = function(){
 	var searchObject = Indeko.Morphsearch.toArray();
 	if (!$.isEmptyObject(searchObject)) {
 		var jsonString = JSON.stringify(searchObject);
-		jsonString = encodeURI(jsonString);
+		//jsonString = encodeURI(jsonString);
 
 		myimgmap.areas[myimgmap.currentid].ahref = encodeURI(Indeko.Morphsearch.toUrl(searchObject));
 		myimgmap.areas[myimgmap.currentid].json = jsonString;
@@ -923,7 +923,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 
         // If search results should be displayed in the AJAX block view besides the knowledge map
         if (elemBlockSearchresults.length) {
-            var jsonString = decodeURI(decodeURI($(this).attr('data-json')));
+            var jsonString = $(this).attr('data-json');
 
         	// Get search parameters and execute the AJAX call.
             var searchObject = JSON.parse(jsonString);
