@@ -897,7 +897,7 @@ Indeko.ImageMap.hookSaveButton = function () {
 			Indeko.ImageMap.elemTags.val(-1); // clear tags field
 			$.each(allAreas, function (index, area) {
 				if (!$.isEmptyObject(area.json)) {
-					jsonString = decodeURI(area.json);
+					jsonString = area.json;
 					var searchObject = JSON.parse(jsonString);
 
 					// add tags to select field
