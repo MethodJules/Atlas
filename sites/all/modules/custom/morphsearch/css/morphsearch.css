@@ -17,7 +17,7 @@
 /*
  * Fix cut off chosen placeholder text and search field (caused if element is hidden on load)
  */
-.chosen-container .chosen-choices .search-field {
+#block-morphsearch-morphsearch-block .chosen-container .chosen-choices .search-field {
     width: 100% !important;
 }
 

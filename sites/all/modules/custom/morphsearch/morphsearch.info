@@ -6,7 +6,7 @@ configure = admin/config/search/morphsearch
 
 dependencies[] = libraries
 dependencies[] = jquery_update
-dependencies[] = apachesolr
+dependencies[] = apachesolr_search
 dependencies[] = fontawesome
 dependencies[] = taxonomy
 
