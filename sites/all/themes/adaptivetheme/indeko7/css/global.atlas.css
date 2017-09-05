@@ -570,3 +570,25 @@ img[src*="Logo_PT_DLR_deutsch_neu.jpg"] {
         margin-right:0;
     }
 }
+
+/* =============================================================================
+    Leaflet Maps
+    TODO
+   ========================================================================== */
+/* Quick fix, remove margin and padding to safe space */
+#views-exposed-form-research-map-research .chosen-container,
+#views-exposed-form-research-researchsite .chosen-container,
+#views-exposed-form-research-page .chosen-container {
+    margin: 0;
+    padding: 0;
+}
+/* Fix width of exposed morphological filters block in sidebar */
+#views-exposed-form-research-map-research .views-exposed-widget {
+    max-width: 100%;
+    padding-right: 0;
+}
+
+/* Fix IP Geolocation Views & Maps font icons within marker, not above */
+.leaflet-tagged-marker i {
+    top: -15px;
+}

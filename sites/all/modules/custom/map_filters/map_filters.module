@@ -1,0 +1,85 @@
+<?php
+/**
+ * @file
+ * Automatically adds morphological box exposed filters to map views.
+ */
+function map_filters_views_pre_view(&$view, &$display_id, &$args) {
+
+  // The search results map settings of the maps view
+  if ($view->name === 'research' && $display_id === 'map_research') {
+
+    // Get morphological box taxonomy vocabularies
+    $query = "SELECT taxonomy_vocabulary.name AS vocabulary_name, taxonomy_vocabulary.machine_name AS vocabulary_machinename,
+              taxonomy_vocabulary.vid AS vocabulary_vid, taxonomy_vocabulary.weight AS vocabulary_weight
+            FROM {taxonomy_vocabulary} taxonomy_vocabulary
+            WHERE taxonomy_vocabulary.machine_name LIKE 'tax_morph_%'
+            ORDER BY vocabulary_weight ASC, vocabulary_name ASC;";
+    $result = db_query($query);
+
+    // Get existing view filters
+    $filters = $view->display_handler->get_option('filters');
+
+    // Add all morphological box vocabularies as exposed filters
+    foreach ($result as $vocabulary) {
+
+      $vocMachineName = $vocabulary->vocabulary_machinename;
+      $vocLabel = $vocabulary->vocabulary_name;
+
+      if (empty($filters[$vocMachineName])) {
+        // There is no vid filter so we have to add it
+        $view->add_item(
+          $view->current_display,
+          'filter',
+          'taxonomy_index',
+          'tid',
+          array(
+            'relationship' => 'none',
+            'group_type' => 'group',
+            'ui_name' => '',
+            'operator' => 'or',
+            'value' => '',
+            'group' => '1',
+            'exposed' => true,
+            'expose' =>
+              array (
+                'label' => $vocLabel,
+                'description' => '',
+                'use_operator' => 0,
+                'operator_label' => '',
+                'identifier' => $vocMachineName,
+                'required' => 0,
+                'remember' => 0,
+                'multiple' => 0,
+                'reduce' => false,
+              ),
+            'is_grouped' => false,
+            'group_info' =>
+              array (
+                'label' => '',
+                'description' => '',
+                'identifier' => '',
+                'optional' => true,
+                'widget' => 'select',
+                'multiple' => false,
+                'remember' => 0,
+                'default_group' => 'All',
+                'default_group_multiple' =>
+                  array (
+                  ),
+                'group_items' =>
+                  array (
+                  ),
+              ),
+            'reduce_duplicates' => 0,
+            'type' => 'select',
+            'limit' => true,
+            'vocabulary' => $vocMachineName,
+            'hierarchy' => 0,
+            'error_message' => 1,
+          )
+        );
+      }
+    }
+  }
+}
+
