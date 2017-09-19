@@ -588,7 +588,8 @@ img[src*="Logo_PT_DLR_deutsch_neu.jpg"] {
     padding-right: 0;
 }
 
-/* Fix IP Geolocation Views & Maps font icons within marker, not above */
-.leaflet-tagged-marker i {
-    top: -15px;
+/* Fix IP Geolocation Views & Maps to point marker icon tip at geo location instead of icon center.
+ * Has to be adjusted if own custom marcer icons are used */
+.leaflet-tagged-marker > .leaflet-marker-icon {
+    margin-top: -42px !important;
 }
