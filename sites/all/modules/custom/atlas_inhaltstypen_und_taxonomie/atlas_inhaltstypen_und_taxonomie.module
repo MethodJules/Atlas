@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Atlas Inhaltstypen und Taxonomie feature.
+ */
+
+include_once 'atlas_inhaltstypen_und_taxonomie.features.inc';
