@@ -46,16 +46,82 @@
    * inspector or Firebug to get the classes from the page output if you need
    * more granular control over block alignment and stacking.
    */
-  .region[class*="float-blocks"] .block {
-    float: none;
-    width: 100%;
-  }
+	.region[class*="float-blocks"] .block {
+		float: none;
+		width: 100%;
+	}
+	
+	#page-wrapper {
+		padding-left: 5%;
+		padding-right: 5%;
+		margin-left: auto;
+		margin-right: auto;
+		}
+		
+	div#content-column, div.content-inner, .sidebar-first div.content-inner, .sidebar-second div.content-inner, .two-sidebars div.content-inner, div.sidebar, .sidebar-first div.sidebar, .sidebar-second div.sidebar, .two-sidebars div.sidebar, div.region .block {
+		width: auto;
+		}
+		
+	/* EVENT ACTIVITY LOG*/
+	
 }
 
 /*
  * Tablet sizes and up
  */
-/* @media only screen and (min-width: 768px) {} */
+@media only screen and (max-width: 768px) {
+
+/* =============================================================================
+ * MODUL SHOWCASE
+ * ========================================================================== */
+ 
+.node-showcase .meetupwrap p,
+.node-showcase .fokuswrap p,
+.node-showcase .newswrap p,
+.node-showcase .epubwrap p,
+.node-showcase .atlaswrap p,
+.node-showcase .biwrap p,
+.node-showcase .wizardwrap p {
+	width: 100%;
+	}
+	
+.node-showcase .meetupwrap p,
+.node-showcase .fokuswrap p,
+.node-showcase .newswrap p,
+.node-showcase .epubwrap p,
+.node-showcase .atlaswrap p,
+.node-showcase .biwrap p,
+.node-showcase .wizardwrap p,
+.node-showcase .meetupwrap img,
+.node-showcase .fokuswrap img,
+.node-showcase .newswrap img,
+.node-showcase .epubwrap img,
+.node-showcase .atlaswrap img,
+.node-showcase .biwrap img,
+.node-showcase .wizardwrap img {
+	float: none;
+	display: block;
+	clear: both;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	}
+
+}
+/* =============================================================================
+ * EVENTUEBERSICHT HTML LIST
+ * ========================================================================== */
+ 
+@media screen and (max-width: 980px) {
+	
+	div.views-field-field-news-mehr,
+	.view-Eventuebersicht h3 {
+		width: 100%;
+		max-width: 100%;
+		float: left;
+		margin: .5rem 0;
+		}
+}
 
 /*
  * Desktops/laptops and up

@@ -7,6 +7,7 @@ engine = phptemplate
 screenshot = screenshot.png
 stylesheets[screen][] = css/global.base.css
 stylesheets[screen][] = css/global.styles.css
+stylesheets[screen][] = css/global.atlas.css
 regions[sidebar_first] = Sidebar first
 regions[sidebar_second] = Sidebar second
 regions[content] = Main Content
