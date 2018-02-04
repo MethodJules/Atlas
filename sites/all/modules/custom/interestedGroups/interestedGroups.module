@@ -185,93 +185,104 @@ function interestedGroups_change_interested_status()
 function interestedGroups_getInterestedGroups() {
 
     $node = menu_get_object();
-    $node2 = "Interesse/".$node->nid;
-    $node3 = "Teilnahme/".$node->nid;
+
+    // display only if on a single event page. Otherwise error if several events are displayed on e.g. overview pages.
+    if (!empty($node)) {
+
+      $node2 = "Interesse/" . $node->nid;
+      $node3 = "Teilnahme/" . $node->nid;
 
 
-    $node4 = "../user/login?destination=node/".$node->nid;
-    $tempString = "";
-    $array = array();
-    $projectID = interestedGroups_get_projectID();
+      $node4 = "../user/login?destination=node/" . $node->nid;
+      $tempString = "";
+      $array = array();
+      $projectID = interestedGroups_get_projectID();
 
-    $result = db_query("SELECT * from {interestedGroups} as groups WHERE groups.eventID = :id AND groups.projectID = :projectID",
+      $result = db_query("SELECT * from {interestedGroups} as groups WHERE groups.eventID = :id AND groups.projectID = :projectID",
         array(":id" => $node->nid, ":projectID" => $projectID));
 
-    /*
-     * Zunächst werden die Button generiert, die danach beschriftet sind, ob der User sich bereits interessiert
-     * oder teilnimmt oder nicht
-     */
-    foreach($result as $r) {
+      /*
+       * Zunächst werden die Button generiert, die danach beschriftet sind, ob der User sich bereits interessiert
+       * oder teilnimmt oder nicht
+       */
+      foreach ($result as $r) {
         array_push($array, "Test");
 
         //Wenn sich das Projekt entweder interessiert oder teilnimmt:
-        if(user_is_logged_in()) {
+        if (user_is_logged_in()) {
 
-            if($r->interested == 1) {
-                if($r->accept != 1) {
-                    $tempString .= "<br><br><br><button onclick=\"window.location.href='$node2'\" type=\"button\" id=\"keinInteresse\">Ich bin nicht interessiert </button> ";
-                }
-            } else {
-                $tempString .= "<br><br><br><button onclick=\"window.location.href='$node2'\" type=\"button\" id=\"interesse\">Ich bin interessiert </button> ";
+          if ($r->interested == 1) {
+            if ($r->accept != 1) {
+              $tempString .= "<br><br><br><button onclick=\"window.location.href='$node2'\" type=\"button\" id=\"keinInteresse\">Ich bin nicht interessiert </button> ";
             }
-
-            if($r->accept == 1) {
-                $tempString .= " <button onclick=\"window . location . href = '$node3'\" type=\"button\" id=\"keineTeilnahme\">Ich nehme nicht teil </button> ";
-            } else {
-                $tempString .= " <button onclick=\"window . location . href = '$node3'\" type=\"button\" id=\"teilnahme\">Ich nehme teil </button> ";
-            }
-        }
-    }
-
-    //Wenn sich das Projekt noch nicht angemeldet hat:
-    if(sizeof($array) == 0) {
-
-        if(user_is_logged_in()) {
+          }
+          else {
             $tempString .= "<br><br><br><button onclick=\"window.location.href='$node2'\" type=\"button\" id=\"interesse\">Ich bin interessiert </button> ";
+          }
+
+          if ($r->accept == 1) {
+            $tempString .= " <button onclick=\"window . location . href = '$node3'\" type=\"button\" id=\"keineTeilnahme\">Ich nehme nicht teil </button> ";
+          }
+          else {
             $tempString .= " <button onclick=\"window . location . href = '$node3'\" type=\"button\" id=\"teilnahme\">Ich nehme teil </button> ";
-
-        } else {
-            $tempString .= "<br><br><br><button onclick=\"window.location.href='$node4'\" type=\"button\" id=\"interesse\">Ich bin interessiert </button> ";
-            $tempString .= " <button onclick=\"window . location . href = '$node4'\" type=\"button\" id=\"teilnahme\">Ich nehme teil </button> ";
+          }
         }
-    }
+      }
+
+      //Wenn sich das Projekt noch nicht angemeldet hat:
+      if (sizeof($array) == 0) {
+
+        if (user_is_logged_in()) {
+          $tempString .= "<br><br><br><button onclick=\"window.location.href='$node2'\" type=\"button\" id=\"interesse\">Ich bin interessiert </button> ";
+          $tempString .= " <button onclick=\"window . location . href = '$node3'\" type=\"button\" id=\"teilnahme\">Ich nehme teil </button> ";
+
+        }
+        else {
+          $tempString .= "<br><br><br><button onclick=\"window.location.href='$node4'\" type=\"button\" id=\"interesse\">Ich bin interessiert </button> ";
+          $tempString .= " <button onclick=\"window . location . href = '$node4'\" type=\"button\" id=\"teilnahme\">Ich nehme teil </button> ";
+        }
+      }
 
 
-    $tempString .= "<table><th> Projekt </th><th> interessiert </th> <th> nimmt teil </th> ";
+      $tempString .= "<table><th> Projekt </th><th> interessiert </th> <th> nimmt teil </th> ";
 
-    /*
-     * Für jede Seite außer der Startseite gibt es eine node-ID, daher muss die Startseite rausgenommen werden.
-     */
-    if(strcmp(drupal_get_path_alias(),"indeko-navi-modell")) {
+      /*
+       * Für jede Seite außer der Startseite gibt es eine node-ID, daher muss die Startseite rausgenommen werden.
+       */
+      if (strcmp(drupal_get_path_alias(), "indeko-navi-modell")) {
         $type = $node->type;
         if (!strcmp($type, "event")) {
-            $result = db_query("SELECT * from {interestedGroups} as groups WHERE groups.eventID = :id ", array(":id" => $node->nid));
+          $result = db_query("SELECT * from {interestedGroups} as groups WHERE groups.eventID = :id ", array(":id" => $node->nid));
 
-            foreach ($result as $r) {
-                $userID = user_load($r->userID);
-                $project = get_project_of_user($userID);
-                if ($r->interested == 0) {
-                    $interested = "Nein";
-                } else {
-                    $interested = "Ja";
-                }
-
-                if ($r->accept == 0) {
-                    $accept = "Nein";
-                } else {
-                    $accept = "Ja";
-                }
-
-                if($r->interested == 1 OR $r->accept == 1) {
-
-                //$tempString = $tempString . '<tr><td>' . $test->name . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
-                    $tempString = $tempString . '<tr><td>' . $project[0] . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
-                }
+          foreach ($result as $r) {
+            $userID = user_load($r->userID);
+            $project = get_project_of_user($userID);
+            if ($r->interested == 0) {
+              $interested = "Nein";
+            }
+            else {
+              $interested = "Ja";
             }
 
-            $tempString = $tempString . '</table>';
-            return $tempString;
+            if ($r->accept == 0) {
+              $accept = "Nein";
+            }
+            else {
+              $accept = "Ja";
+            }
+
+            if ($r->interested == 1 OR $r->accept == 1) {
+
+              //$tempString = $tempString . '<tr><td>' . $test->name . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
+              $tempString = $tempString . '<tr><td>' . $project[0] . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
+            }
+          }
+
+          $tempString = $tempString . '</table>';
+
+          return $tempString;
         }
+      }
     }
 }
 
