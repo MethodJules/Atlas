@@ -936,6 +936,10 @@ function morphsearch_apachesolr_index_document_build_node(ApacheSolrDocument $do
       $array_tids = array_merge($array_tids, get_taxonomy_ids($ref));
     }
 
+    // merge existing publication taxonomy term ids with research result
+    $existingTids = $document->getField('tid')['value'];
+    $array_tids = array_merge($array_tids, $existingTids);
+
     // add taxonomy IDs to solr document index
     $array_tids = array_unique($array_tids);
     $document->setField('tid', $array_tids);
@@ -965,20 +969,28 @@ function morphsearch_apachesolr_index_document_build_node(ApacheSolrDocument $do
   // TODO duplicate code
   // add taxonomy IDs of associated research results to projects
   // (projects can be found by morphological terms of associated research results)
-  if ($entity->type === 'projekt' and node_type_load('forschungsergebnis') != FALSE) {
-    $array_tids = array();
+  if ($entity->type === 'projekt') {
 
-    // get IDs of all associated research results
-    $reference_node_ids = get_associated_search_result_ids($entity->nid, 'project');
+    // add term ids of related research results to project
+    if (node_type_load('forschungsergebnis') != FALSE) {
+      $array_tids = array();
 
-    // get all taxonomy IDs of associated research results
-    foreach ($reference_node_ids as $ref) {
-      $array_tids = array_merge($array_tids, get_taxonomy_ids($ref));
+      // get IDs of all associated research results
+      $reference_node_ids = get_associated_search_result_ids($entity->nid, 'project');
+
+      // get all taxonomy IDs of associated research results
+      foreach ($reference_node_ids as $ref) {
+        $array_tids = array_merge($array_tids, get_taxonomy_ids($ref));
+      }
+
+      // merge existing project taxonomy term ids with research result
+      $existingTids = $document->getField('tid')['value'];
+      $array_tids = array_merge($array_tids, $existingTids);
+
+      // add taxonomy IDs to solr document index
+      $array_tids = array_unique($array_tids);
+      $document->setField('tid', $array_tids);
     }
-
-    // add taxonomy IDs to solr document index
-    $array_tids = array_unique($array_tids);
-    $document->setField('tid', $array_tids);
   }
 }
 
