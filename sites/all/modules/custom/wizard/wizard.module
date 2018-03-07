@@ -1,0 +1,123 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: mende
+ * Date: 3/1/2018
+ * Time: 12:20 PM
+ */
+
+/**
+ * @file
+ * InDeKo.Navi Wizard module file.
+ * Adds content type 'hypothesis' and wizard functionality.
+ * Wizard realized in combination with knowledge map module (form_wissenskarte_module).
+ *
+ */
+
+
+/**
+ * Implements hook_node_info().
+ * Define a new content type 'hypothesis'.
+ */
+function wizard_node_info() {
+  $contentType = array(
+    'hypothesis' => array(
+      'type'        => 'hypothesis',
+      'name'        => t('Hypothese'),
+      'base'        => 'node_content',
+      'description' => t('Hypothese für Wizard'),
+      'has_title'   => TRUE,
+      'title_label' => t('Titel'),
+      'custom'      => TRUE,
+    ),
+  );
+
+  return $contentType;
+}
+
+
+/**
+ * Implements hook_theme().
+ * Tell Drupal to use the module's template file to display hypothesis nodes.
+ */
+function wizard_theme($existing, $type, $theme, $path) {
+  $theme = array();
+  $theme['node__hypothesis'] = array(
+    'render element' => 'content',
+    'base hook' => 'node',
+    'template' => 'node--hypothesis',
+    'path' => drupal_get_path('module', 'wizard') . '/templates',
+  );
+
+  return $theme;
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK().
+ * Preprocess hypothesis theme variables.
+ */
+function wizard_preprocess_node(&$variables) {
+  if ($variables['node']->type === 'hypothesis') {
+
+    // get the relevant hypothesis fields
+    $hypGroup = array();
+    foreach ($variables['content'] as $key => $field) {
+      $keyArray = explode('_', $key);
+      if ($keyArray[0] === 'field' && $keyArray[1] === 'hyp') {
+        $hypGroup[$keyArray[2]][$keyArray[3]] = $field;
+
+        // content will be printed separately in node--hypothesis.tpl.php
+        hide($variables['content'][$key]);
+      }
+    }
+
+    // build fieldset for each group (title, description, links)
+    foreach ($hypGroup as $group) {
+      $nodeIds = array();
+      foreach ($group['links']['#items'] as $link) {
+        $nodeIds[] = $link['target_id'];
+      }
+
+      // build Solr query to return the given nodes
+      $searchData = 'entity_id:(' . implode(' OR ', $nodeIds) . ')';
+
+      $fieldset = array(
+        'element' => array(
+          '#type' => 'fieldset',
+          '#title' => $group['title']['#items'][0]['value'],
+          '#value' => $group['description']['#items'][0]['value'],
+          '#children' => '<div>',
+          '#attributes' => array(
+            'class' => array('hypothesis'),
+            'data-search' => array($searchData),
+          ),
+        )
+      );
+
+      // content will be printed separately in node--hypothesis.tpl.php
+      $variables['content']['fieldsets'][] = $fieldset;
+      hide($variables['content']['fieldsets']);
+
+      // TODO textarea always rendered as plain text, line breaks etc. removed?!
+      $variables['content']['field_references'][0]['#markup'] = $variables['content']['field_references']['#items'][0]['value'];
+      hide($variables['content']['field_references']);
+    }
+
+    // attach JavaScript file
+    $variables['content']['#attached']['js'][] = array(
+      'data' => drupal_get_path('module', 'wizard') . '/js/wizard.js',
+      'type' => 'file',
+      'scope' => 'footer',
+      'group' => JS_THEME,
+    );
+
+    // attach CSS file
+    $variables['content']['#attached']['css'][] = array(
+      'data' => drupal_get_path('module', 'wizard') . '/css/wizard.css',
+      'type' => 'file',
+      'scope' => 'footer',
+      'group' => CSS_THEME,
+    );
+  }
+}
