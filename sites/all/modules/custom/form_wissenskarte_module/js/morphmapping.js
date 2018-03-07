@@ -725,11 +725,18 @@ Indeko.MorphBox.update = function(id) {
  */
 Indeko.MorphBox.selectItems = function() {
 
-	// todo testing 18.10
-	var jsonString = myimgmap.areas[myimgmap.currentid].json;
-	//jsonString = decodeURI(jsonString);
-	var searchObject = JSON.parse(jsonString);
-	Indeko.Morphsearch.toSearchblock(searchObject);
+	// TODO direct url prototype
+	// check if href is a search string or direct url
+	var href = myimgmap.areas[myimgmap.currentid].ahref;
+	if (href.indexOf(Drupal.settings.morphsearch.searchPath) === -1) {
+    $('#direct-url').val(myimgmap.areas[myimgmap.currentid].ahref);
+  } else {
+    // todo testing 18.10
+    var jsonString = myimgmap.areas[myimgmap.currentid].json;
+    //jsonString = decodeURI(jsonString);
+    var searchObject = JSON.parse(jsonString);
+    Indeko.Morphsearch.toSearchblock(searchObject);
+	}
 };
 
 /*
@@ -739,6 +746,10 @@ Indeko.MorphBox.selectItems = function() {
 Indeko.MorphBox.reset = function() {
 	Indeko.Morphsearch.reset();
 	Indeko.Morphsearch.elemFulltext.val(''); // ID 34 do not reset fulltext field on reset, so have to do it here
+
+	// TODO direct url prototype
+	// clear the url textfield
+	$('#direct-url').val('');
 
 	// Remove class on morphbox block
     Indeko.MorphBox.element.removeClass('drawfinished');
@@ -771,20 +782,37 @@ Indeko.MorphBox.convertMorphsearch = function() {
 	Indeko.MorphBox.selects.change(Indeko.MorphBox.getSelectedValuesFromMorphBox);  				// changelistener for comboboxes in MorpBox
 	Indeko.MorphBox.searchTypeBlock.click(Indeko.MorphBox.getSelectedValuesFromMorphBox);			// clickevent for Inhaltstypen
 	Indeko.Morphsearch.elemFulltext.unbind().keyup(Indeko.MorphBox.getSelectedValuesFromMorphBox);  // keyuplistener for fulltext field
+
+	// TODO direct url prototype
+	// add a textfield for map area direct links
+	var htmlDirectUrl = '<div class="form-item form-type-textfield">' +
+		'<input type="text" id="direct-url" class="direct-url form-text" value="" placeholder="direct URL" style="width: 100%;"></div>' +
+		'<div><b>OR<b></div>';
+  $('#fulltextsearchrow').before(htmlDirectUrl);
+  $('#direct-url').keyup(Indeko.MorphBox.getSelectedValuesFromMorphBox);
+
 	Indeko.MorphBox.update(myimgmap.currentid);														// show selected morphological box items of current map area
 };
 
 // todo testing janzen 18.10
 Indeko.MorphBox.getSelectedValuesFromMorphBox = function(){
-	var searchObject = Indeko.Morphsearch.toArray();
-	if (!$.isEmptyObject(searchObject)) {
-		var jsonString = JSON.stringify(searchObject);
-		//jsonString = encodeURI(jsonString);
 
-		myimgmap.areas[myimgmap.currentid].ahref = encodeURI(Indeko.Morphsearch.toUrl(searchObject));
-		myimgmap.areas[myimgmap.currentid].json = jsonString;
-		Indeko.MorphBox.element.removeClass('addAreaError');
-		myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
+  // TODO direct url prototype
+  // if direct url given ignore search box parameters
+  if ($('#direct-url').val().length > 0) {
+    myimgmap.areas[myimgmap.currentid].ahref = encodeURI($('#direct-url').val());
+    myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
+  } else {
+    var searchObject = Indeko.Morphsearch.toArray();
+    if (!$.isEmptyObject(searchObject)) {
+      var jsonString = JSON.stringify(searchObject);
+      //jsonString = encodeURI(jsonString);
+
+      myimgmap.areas[myimgmap.currentid].ahref = encodeURI(Indeko.Morphsearch.toUrl(searchObject));
+      myimgmap.areas[myimgmap.currentid].json = jsonString;
+      Indeko.MorphBox.element.removeClass('addAreaError');
+      myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
+    }
 	}
 };
 
@@ -920,6 +948,17 @@ Indeko.ImageMap.hookSaveButton = function () {
 Indeko.ImageMap.hookMapAreas = function () {
     $("map area").click(function () {
     	var elemBlockSearchresults = $('#block-views-searchresults-block');
+
+      	// TODO direct url prototype
+				// just treat as a normal link if it is not a search link
+      	var href = $(this).attr('href');
+      	if (href.indexOf(Drupal.settings.morphsearch.searchPath) === -1) {
+      		if(href.indexOf('http') === -1) {
+      			window.location.href = 'http://' + href;
+          } else {
+      			return true;
+					}
+      	}
 
         // If search results should be displayed in the AJAX block view besides the knowledge map
         if (elemBlockSearchresults.length) {
