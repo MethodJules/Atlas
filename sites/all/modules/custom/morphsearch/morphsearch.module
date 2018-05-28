@@ -461,6 +461,34 @@ function morphsearch_menu() {
       'access callback' => 'user_is_logged_in',
   );
 
+  // display morphological box
+  $items['config/morphbox'] = array(
+    'title' => 'Morphological Box',
+    'description' => 'Edit the morphological box.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('morphsearch_morphbox'),
+    'access arguments' => array('administer taxonomy'),
+    'file' => 'morphsearch.morphbox.inc',
+  );
+
+  /*$items['config/morphbox/%taxonomy_vocabulary_machine_name'] = array(
+    'title callback' => 'entity_label',
+    'title arguments' => array('taxonomy_vocabulary', 2),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('morphbox_edit_dimension', 3),
+    'access arguments' => array('administer taxonomy'),
+    'file' => 'morphsearch.morphbox.inc',
+  );*/
+
+  $items['config/morphbox/%'] = array(
+    'title' => 'Edit Vocabulary',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('morphsearch_ajax_edit_vocabulary', 2),
+    'access arguments' => array('administer taxonomy'),
+    'file' => 'morphsearch.morphbox.inc',
+  );
+
+
   return $items;
 }
 
