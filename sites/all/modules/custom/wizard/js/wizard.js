@@ -13,6 +13,30 @@
     }
   });
 
+  // load qtip2 tooltips
+  $('.hypothesis').each(function() {
+    $(this).qtip({
+      content: {
+        text: $(this).find('.tooltip'),
+        show: {delay: 1}
+      },
+
+      position: {
+        my: 'bottom left',
+        at: 'bottom left',
+        target: 'mouse',
+        adjust: {
+          x: 0, y: -10
+        }
+      },
+
+      style: {
+        tip: false,
+        classes: 'field-content'
+      }
+    });
+  });
+
   Drupal.behaviors.wizard = {
     attach: function (context, settings) {
 

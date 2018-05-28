@@ -75,8 +75,11 @@ function wizard_preprocess_node(&$variables) {
     // build fieldset for each group (title, description, links)
     foreach ($hypGroup as $group) {
       $nodeIds = array();
+      $nodeTooltips = array();
       foreach ($group['links']['#items'] as $link) {
         $nodeIds[] = $link['target_id'];
+        $nodeTooltips[] = array('title' => $link['entity']->title,
+                                'type' => $link['entity']->type);
       }
 
       // build Solr query to return the given nodes
@@ -94,6 +97,13 @@ function wizard_preprocess_node(&$variables) {
           ),
         )
       );
+
+      // add fieldset tooltip (link titles with content type icon)
+      $fieldset['element']['#value'] .= '<div class="tooltip">';
+      foreach ($nodeTooltips as $tooltip) {
+        $fieldset['element']['#value'] .= '<div class="icon ' . $tooltip['type'] . '">' . check_plain($tooltip['title']) .'</div>';
+      }
+      $fieldset['element']['#value'] .=  '</div>';
 
       // content will be printed separately in node--hypothesis.tpl.php
       $variables['content']['fieldsets'][] = $fieldset;

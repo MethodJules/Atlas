@@ -16,6 +16,14 @@ fieldset.hypothesis {
     cursor: pointer;
 }
 
+fieldset.hypothesis .tooltip {
+    display: none;
+}
+
+.tooltip .icon {
+    padding-left: 16px;
+}
+
 .fieldsets {
     padding-top: 1em;
     padding-left: 1em;
