@@ -35,6 +35,40 @@ function wizard_node_info() {
   return $contentType;
 }
 
+/**
+ * Implements hook_menu().
+ **/
+function wizard_menu() {
+  // AJAX request for publication reference tooltip.
+  $items['get/publication/ajax/%'] = array(
+    'type'            => MENU_CALLBACK,
+    'page callback'   => 'wizard_get_publication_preview_callback',
+    'page arguments' => array(3),
+    'access callback' => TRUE,
+  );
+
+  return $items;
+}
+
+/**
+ * Creates a preview of a node (for being displayed in a tooltip).
+ * Returns HTML of the preview.
+ *
+ * @param $nid
+ *   The node ID
+ */
+function wizard_get_publication_preview_callback($nid) {
+  // check for valid input (positive integer)
+  if(is_numeric($nid) && $nid > 0 && $nid == round($nid)) {
+    $publication = node_load($nid);
+
+    if (isset($publication)) {
+      $view = node_view($publication);
+
+      drupal_json_output($view['body']['#markup']);
+    }
+  }
+}
 
 /**
  * Implements hook_theme().
@@ -70,6 +104,15 @@ function wizard_preprocess_node(&$variables) {
         // content will be printed separately in node--hypothesis.tpl.php
         // do not render the separate fields, they are build and rendered as fieldsets later
         hide($variables['content'][$key]);
+      } else if ($key === 'field_references') {
+
+        // add the referenced biblio/publication node ID to the href link (used for mouse-over preview popup)
+        foreach ($field['#items'] as $refKey => $reference) {
+          $link = $field[$refKey]['#markup'];
+          $nid = $reference['target_id'];
+          $linkWithNid = str_replace('<a', '<a class="referencelink" id=' . $nid, $link);
+          $variables['content'][$key][$refKey]['#markup'] = $linkWithNid;
+        }
       }
     }
 

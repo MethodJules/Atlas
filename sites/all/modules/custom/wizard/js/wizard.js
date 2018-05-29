@@ -13,7 +13,7 @@
     }
   });
 
-  // load qtip2 tooltips
+  // load qtip2 tooltips for hypothesis fields
   $('.hypothesis').each(function() {
     $(this).qtip({
       content: {
@@ -28,6 +28,38 @@
         adjust: {
           x: 0, y: -10
         }
+      },
+
+      style: {
+        tip: false,
+        classes: 'field-content'
+      }
+    });
+  });
+
+  // load qtip2 tooltips for references (retrieved via AJAX)
+  $('.referencelink').each(function() {
+    $(this).qtip({
+      content: {
+        text: 'Loading preview...',
+        ajax: {
+          url: Drupal.settings.basePath + 'get/publication/ajax/' + $(this).attr('id'),
+          dataType: 'json',
+          success: function(data, status) {
+            this.set('content.text', data);
+          }
+        },
+        show: {delay: 1}
+      },
+
+      position: {
+        my: 'bottom left',
+        at: 'bottom left',
+        target: 'mouse',
+        adjust: {
+          x: 0, y: -10
+        },
+        viewport: $(window)
       },
 
       style: {
