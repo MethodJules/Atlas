@@ -68,6 +68,7 @@ function wizard_preprocess_node(&$variables) {
         $hypGroup[$keyArray[2]][$keyArray[3]] = $field;
 
         // content will be printed separately in node--hypothesis.tpl.php
+        // do not render the separate fields, they are build and rendered as fieldsets later
         hide($variables['content'][$key]);
       }
     }
@@ -108,9 +109,7 @@ function wizard_preprocess_node(&$variables) {
       // content will be printed separately in node--hypothesis.tpl.php
       $variables['content']['fieldsets'][] = $fieldset;
       hide($variables['content']['fieldsets']);
-
-      // TODO textarea always rendered as plain text, line breaks etc. removed?!
-      $variables['content']['field_references'][0]['#markup'] = $variables['content']['field_references']['#items'][0]['value'];
+      hide($variables['content']['field_similar']);
       hide($variables['content']['field_references']);
     }
 

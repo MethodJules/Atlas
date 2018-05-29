@@ -135,6 +135,9 @@ hide($content['links']);
           <?php       print render($content['fieldsets']);?>
 
         </div>
+        <div class="similar">
+          <?php print render($content['field_similar']);?>
+        </div>
         <div class="references">
           <?php print render($content['field_references']);?>
         </div>
