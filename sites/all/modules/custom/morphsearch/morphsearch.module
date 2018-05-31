@@ -464,9 +464,19 @@ function morphsearch_menu() {
   // display morphological box
   $items['config/morphbox'] = array(
     'title' => 'Morphological Box',
-    'description' => 'Edit the morphological box.',
+    'description' => 'Create a new morphological box dimension.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('morphsearch_morphbox'),
+    'page arguments' => array('morphsearch_get_morphbox'),
+    'access arguments' => array('administer taxonomy'),
+    'file' => 'morphsearch.morphbox.inc',
+  );
+
+  // display morphological box
+  $items['config/morphbox/%'] = array(
+    'title' => 'Morphological Box',
+    'description' => 'Edit an existing morphological box dimension.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('morphsearch_get_morphbox_vid', 2),
     'access arguments' => array('administer taxonomy'),
     'file' => 'morphsearch.morphbox.inc',
   );
@@ -480,13 +490,13 @@ function morphsearch_menu() {
     'file' => 'morphsearch.morphbox.inc',
   );*/
 
-  $items['config/morphbox/%'] = array(
+  /*$items['config/morphbox/%'] = array(
     'title' => 'Edit Vocabulary',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('morphsearch_ajax_edit_vocabulary', 2),
     'access arguments' => array('administer taxonomy'),
     'file' => 'morphsearch.morphbox.inc',
-  );
+  );*/
 
 
   return $items;

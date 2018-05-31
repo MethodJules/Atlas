@@ -1,0 +1,78 @@
+/* =============================================================================
+ *   Morphological box base page layout
+ *   (remove all other page elements, increase horizontal space for morphological box)
+ * ========================================================================== */
+#page {
+    max-width: unset;
+}
+
+#main-content {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+#columns {
+    margin-top: 3em;
+}
+
+.sidebar {
+    display: none;
+}
+
+.content-inner {
+    margin-left: unset !important;
+}
+
+.morphbox-table {
+    margin-top: -30px;
+}
+
+#page-title {
+    margin-bottom: 0;
+}
+
+
+/* =============================================================================
+ *   Morphological box table styling
+ * ========================================================================== */
+.highlight {
+    background-color: lightgreen;
+}
+
+.morphbox-table {
+    float: right;
+    width: 65%;
+    overflow-x: scroll;
+}
+
+th {
+    cursor: pointer;
+}
+
+tr {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* =============================================================================
+ *   Morphological box edit form styling
+ * ========================================================================== */
+.form-item-vocabulary-name,
+#js-ajax-elements-wrapper,
+#edit-actions {
+    float: left;
+    max-width: 35%;
+}
+
+.field-edit-voc {
+    width: auto;
+}
+
+.button-term-remove {
+    margin: 0;
+    margin-bottom: 0.2rem;
+    padding: .2rem .7rem;
+}

@@ -7,7 +7,7 @@
 
 
 /**
- * Form builder to list vocabularies.
+ * Form builder to list vocabularies as a table.
  *
  * @ingroup forms
  * @see morphsearch_morphbox_submit()
@@ -52,23 +52,23 @@ function morphsearch_morphbox($form) {
 
   $form['table'] = array(
     '#markup' => $tableHtml,
+    '#prefix' => '<div class="morphbox-table">',
+    '#suffix' => '</div>',
   );
 
-  drupal_add_js("$('th').click(function() {
-    var index = $(this).index() + 1;
-	$('table tr td:nth-child(' + index + ')').toggleClass('highlight');
-	$('table tr th:nth-child(' + index + ')').toggleClass('highlight');
-});", array(
-    'type' => 'inline',
+  // Attach morphbox JavaScript.
+  $form['content']['#attached']['js'][] = array(
+    'data' => drupal_get_path('module', 'morphsearch') . "/js/morphbox.js",
     'scope' => 'footer',
-    'weight' => 5,
-  ));
+  );
 
-  drupal_add_css(".highlight {background-color: lightgreen;}", array(
-    'type' => 'inline',
+  // Attach morphbox CSS.
+  $form['content']['#attached']['css'][] = array(
+    'data' => drupal_get_path('module', 'morphsearch') . "/css/morphbox.css",
+    'type' => 'file',
     'scope' => 'footer',
-    'weight' => 5,
-  ));
+    'group' => CSS_THEME,
+  );
 
   return $form;
 }
@@ -90,7 +90,7 @@ function morphsearch_morphbox_submit($form, &$form_state) {
 
 
 /**
- * Returns a dynamic form to create and update whole vocabularies with terms.
+ * Form buildes to create and update whole vocabularies with terms.
  *
  * @param $form
  * @param $form_state
@@ -99,7 +99,7 @@ function morphsearch_morphbox_submit($form, &$form_state) {
  * @return array
  *   finished $form
  */
-function morphsearch_ajax_edit_vocabulary($form, &$form_state, $vocabulary_id) {
+function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
 
   if (isset($vocabulary_id)) {
     $voc = taxonomy_vocabulary_load($vocabulary_id);
@@ -107,9 +107,12 @@ function morphsearch_ajax_edit_vocabulary($form, &$form_state, $vocabulary_id) {
 
   $form['vocabulary_name'] = [
     '#type' => 'textfield',
-    '#title' => t('Vocabulary name'),
+    '#title' => t('Dimension name'),
     '#weight' => 0,
     '#default_value' => $voc !== FALSE ? check_plain($voc->name) : '',
+    '#attributes' => [
+      'class' => ['field-edit-voc'],
+    ],
   ];
 
   $form['vocabulary_vid'] = [
@@ -152,18 +155,17 @@ function morphsearch_ajax_edit_vocabulary($form, &$form_state, $vocabulary_id) {
 
     $form['terms_container'][$delta]['name'] = [
       '#type' => 'textfield',
-      #'#title' => t(''),
       '#size' => 60,
       '#default_value' => isset($termTree[$key]) ? check_plain($termTree[$key]->name) : '',
+      '#attributes' => [
+        'class' => ['field-edit-term'],
+      ],
     ];
 
     $form['terms_container'][$delta]['tid'] = [
       '#type' => 'hidden',
       '#value' => isset($termTree[$key]) ? $termTree[$key]->tid : -1,
     ];
-
-
-    $asd = 0;
 
     $form['terms_container'][$delta]['remove_term'] = [
       '#type' => 'submit',
@@ -175,7 +177,7 @@ function morphsearch_ajax_edit_vocabulary($form, &$form_state, $vocabulary_id) {
       ],
       '#weight' => -1,
       '#attributes' => [
-        'class' => ['button-small'],
+        'class' => ['button-term-remove'],
       ],
       '#name' => 'remove_term_' . $delta,
     ];
@@ -189,6 +191,9 @@ function morphsearch_ajax_edit_vocabulary($form, &$form_state, $vocabulary_id) {
       'callback' => 'morphsearch_ajax_edit_vocabulary_add_term_callback',
       'wrapper' => 'js-ajax-elements-wrapper',
     ],
+    '#attributes' => [
+      'class' => ['button-term-add'],
+    ],
     '#weight' => 100,
   ];
 
@@ -199,13 +204,50 @@ function morphsearch_ajax_edit_vocabulary($form, &$form_state, $vocabulary_id) {
 
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save'),
+    '#value' => t('Save dimension'),
     '#submit' => ['morphsearch_ajax_edit_vocabulary_save'],
+    '#attributes' => [
+      'id' => ['button-voc-save'],
+    ],
+  );
+
+  $form['actions']['add_dimension'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add new dimension'),
+    '#submit' => ['morphsearch_edit_vocabulary_add'],
+    '#attributes' => [
+      'id' => ['button-voc-add'],
+    ],
   );
 
   return $form;
 }
 
+/**
+ * Returns form to create a new vocabulary and the morphological box table.
+ */
+function morphsearch_get_morphbox($form, &$form_state) {
+
+  // add morphological box edit form
+  $form = morphsearch_get_vocabulary_edit($form,$form_state, 0);
+
+  // add morphological box to from
+  $form = morphsearch_morphbox($form);
+  return $form;
+}
+
+/**
+ * Returns form to edit an existing vocabulary and the morphological box table.
+ */
+function morphsearch_get_morphbox_vid($form, &$form_state, $vocabulary_id) {
+
+  // add morphological box edit form
+  $form = morphsearch_get_vocabulary_edit($form,$form_state, $vocabulary_id);
+
+  // add morphological box to from
+  $form = morphsearch_morphbox($form);
+  return $form;
+}
 
 /**
  * Dynamically removes a form element and deletes the vocabulary term.
@@ -315,4 +357,15 @@ function morphsearch_ajax_edit_vocabulary_save($form, &$form_state) {
 
     $form_state['redirect'] = 'config/morphbox/' . $vocabulary->vid;
   }
+}
+
+/**
+ * Redirects to the new vocabulary form.
+ */
+function morphsearch_edit_vocabulary_add($form, &$form_state) {
+
+  if ($form_state['submit_handlers'][0] === 'morphsearch_edit_vocabulary_add') {
+    $form_state['redirect'] = 'config/morphbox';
+  }
+
 }
