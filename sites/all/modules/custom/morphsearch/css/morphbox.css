@@ -41,7 +41,7 @@
 
 .morphbox-table {
     float: right;
-    width: 65%;
+    width: calc(100% - 450px);
     overflow-x: scroll;
 }
 
@@ -64,7 +64,8 @@ tr {
 #js-ajax-elements-wrapper,
 #edit-actions {
     float: left;
-    max-width: 35%;
+    width: 420px;
+    clear: left;
 }
 
 .field-edit-voc {
