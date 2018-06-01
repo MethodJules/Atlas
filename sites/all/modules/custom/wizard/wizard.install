@@ -151,6 +151,7 @@ function _wizard_installed_fields() {
           'type' => 'property',
         ),
         'target_bundles' => array(
+          'projekt' => 'projekt',
           'forschungsergebnis' => 'forschungsergebnis',
           'hypothesis' => 'hypothesis',
         ),
@@ -227,6 +228,7 @@ function _wizard_installed_fields() {
           'type' => 'property',
         ),
         'target_bundles' => array(
+          'projekt' => 'projekt',
           'forschungsergebnis' => 'forschungsergebnis',
           'hypothesis' => 'hypothesis',
         ),
@@ -303,6 +305,7 @@ function _wizard_installed_fields() {
           'type' => 'property',
         ),
         'target_bundles' => array(
+          'projekt' => 'projekt',
           'forschungsergebnis' => 'forschungsergebnis',
           'hypothesis' => 'hypothesis',
         ),
@@ -580,7 +583,7 @@ function _wizard_installed_instances() {
     'required' => 1,
     'settings' => array(
       'display_summary' => 0,
-      'text_processing' => 0,
+      'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
@@ -713,7 +716,7 @@ function _wizard_installed_instances() {
     'required' => 1,
     'settings' => array(
       'display_summary' => 0,
-      'text_processing' => 0,
+      'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
