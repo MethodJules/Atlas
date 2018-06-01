@@ -110,6 +110,16 @@ function wizard_preprocess_node(&$variables) {
         foreach ($field['#items'] as $refKey => $reference) {
           $link = $field[$refKey]['#markup'];
           $nid = $reference['target_id'];
+
+          /*
+          // theme publication reference link in citation style (IEEE, APA, MLE, ...)
+          $node = node_load($nid);
+          $style = 'ieee.csl';
+          $base  = variable_get('biblio_base', 'biblio');
+          $link = theme('biblio_style', array('node' => $node, 'base' => $base, 'style_name' => $style));
+
+          // depending on citation style adjust $linkWithNid otherwise all links (title, authors, ...) will get tooltip
+          */
           $linkWithNid = str_replace('<a', '<a class="referencelink" id=' . $nid, $link);
           $variables['content'][$key][$refKey]['#markup'] = $linkWithNid;
         }
