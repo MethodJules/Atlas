@@ -107,9 +107,10 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
 
   $form['vocabulary_name'] = [
     '#type' => 'textfield',
-    '#title' => t('Dimension name'),
+    '#title' => t('Dimension'),
     '#weight' => 0,
     '#default_value' => $voc !== FALSE ? check_plain($voc->name) : '',
+    '#element_validate' => array('morphsearch_morphbox_validate_not_empty'),
     '#attributes' => [
       'class' => ['field-edit-voc'],
     ],
@@ -122,11 +123,17 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
 
   $form['terms_container'] = [
     '#type' => 'container',
+    '#title' => t('Options'),
     '#weight' => 80,
     '#tree' => TRUE,
     // Set up the wrapper so that AJAX will be able to replace the fieldset.
     '#prefix' => '<div id="js-ajax-elements-wrapper">',
     '#suffix' => '</div>',
+  ];
+
+  $form['terms_container']['title'] = [
+    '#type' => 'item',
+    '#title' => t('Values'),
   ];
 
   if (isset($form_state['no_terms'])) {
@@ -185,7 +192,7 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
 
   $form['terms_container']['add_term'] = [
     '#type' => 'submit',
-    '#value' => t('Add one more term'),
+    '#value' => t('Add term'),
     '#submit' => ['morphsearch_ajax_edit_vocabulary_add_term'],
     '#ajax' => [
       'callback' => 'morphsearch_ajax_edit_vocabulary_add_term_callback',
@@ -202,10 +209,10 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
     '#weight' => 999,
   );
 
-  $form['actions']['submit'] = array(
+  $form['actions']['save'] = array(
     '#type' => 'submit',
     '#value' => t('Save dimension'),
-    '#submit' => ['morphsearch_ajax_edit_vocabulary_save'],
+    '#submit' => ['morphsearch_edit_vocabulary_save'],
     '#attributes' => [
       'id' => ['button-voc-save'],
     ],
@@ -213,12 +220,24 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
 
   $form['actions']['add_dimension'] = array(
     '#type' => 'submit',
-    '#value' => t('Add new dimension'),
+    '#value' => t('Add dimension'),
     '#submit' => ['morphsearch_edit_vocabulary_add'],
     '#attributes' => [
       'id' => ['button-voc-add'],
     ],
   );
+
+  // show delete vocabulary button only while editing an existing vocabulary
+  if ($voc !== FALSE) {
+    $form['actions']['delete'] = array(
+      '#type'       => 'submit',
+      '#value'      => t('Delete dimension'),
+      '#submit'     => ['morphsearch_edit_vocabulary_delete'],
+      '#attributes' => [
+        'id' => ['button-voc-delete'],
+      ],
+    );
+  }
 
   return $form;
 }
@@ -301,9 +320,9 @@ function morphsearch_ajax_edit_vocabulary_add_term_callback($form, $form_state) 
 /**
  * Creates a new vocabulary or updates an existing one including all terms.
  */
-function morphsearch_ajax_edit_vocabulary_save($form, &$form_state) {
+function morphsearch_edit_vocabulary_save($form, &$form_state) {
 
-  if ($form_state['submit_handlers'][0] === 'morphsearch_ajax_edit_vocabulary_save') {
+  if ($form_state['submit_handlers'][0] === 'morphsearch_edit_vocabulary_save') {
     $name = $form_state['values']['vocabulary_name'];
     $vid = $form_state['values']['vocabulary_vid'];
 
@@ -359,6 +378,19 @@ function morphsearch_ajax_edit_vocabulary_save($form, &$form_state) {
   }
 }
 
+
+/**
+ * Deletes a vocabulary.
+ */
+function morphsearch_edit_vocabulary_delete($form, &$form_state) {
+  $vid = $form_state['values']['vocabulary_vid'];
+
+  if ($vid > 0) {
+    taxonomy_vocabulary_delete($vid);
+    $form_state['redirect'] = 'config/morphbox/';
+  }
+}
+
 /**
  * Redirects to the new vocabulary form.
  */
@@ -368,4 +400,13 @@ function morphsearch_edit_vocabulary_add($form, &$form_state) {
     $form_state['redirect'] = 'config/morphbox';
   }
 
+}
+
+/**
+ * Form element validate handler. Validates that form field is not empty.
+ */
+function morphsearch_morphbox_validate_not_empty($element, &$form_state) {
+  if (empty($element['#value'])) {
+    form_error($element, t('This field is required.'));
+  }
 }
