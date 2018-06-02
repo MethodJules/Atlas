@@ -7,9 +7,18 @@
     // display results in the AJAX block view besides the hypothesis
     if (elemBlockSearchresults.length) {
 
-      // get search parameters and execute the AJAX call
-      $('#edit-keyword').val($(this).attr('data-search'));
-      $('#edit-submit-searchresults').click();
+      // get search parameters
+      var searchString = $(this).attr('data-search');
+      var nodeIds = searchString.match(/(\d+)/g);
+
+      // if there is only one linked node, follow it immediately
+      if (nodeIds.length === 1) {
+        window.location.href = Drupal.settings.basePath + 'node/' + nodeIds[0]
+      } else {
+        // execute the AJAX call to display results in sidebar
+        $('#edit-keyword').val($(this).attr('data-search'));
+        $('#edit-submit-searchresults').click();
+      }
     }
   });
 
