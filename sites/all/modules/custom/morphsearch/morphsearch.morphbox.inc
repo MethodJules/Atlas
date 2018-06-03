@@ -39,7 +39,14 @@ function morphsearch_morphbox($form) {
   foreach ($all[0] as $vid => $vocName) {
     for ($i = 1; $i <= $noTermsMax; $i++) {
       $termsTree = taxonomy_get_tree($vid);
-      $all[$i][] = isset($termsTree[$i - 1]->name) ? check_plain($termsTree[$i - 1]->name) : '';
+
+      if (isset($termsTree[$i - 1]->name)) {
+        $name = check_plain($termsTree[$i - 1]->name);
+        $depthClass = 'term-depth-' . $termsTree[$i - 1]->depth;
+        $all[$i][] = '<div  class=' . $depthClass . '><span>' . $name . '</span></div>';
+      } else {
+        $all[$i][] = '';
+      }
     }
   }
 
@@ -165,7 +172,7 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
     $form['terms_container'][$delta]['name'] = [
       '#type' => 'textfield',
       '#size' => 60,
-      '#default_value' => isset($termTree[$key]) ? check_plain($termTree[$key]->name) : '',
+      '#default_value' => isset($termTree[$key]) ? $termTree[$key]->name : '',
       '#attributes' => [
         'class' => ['field-edit-term'],
       ],

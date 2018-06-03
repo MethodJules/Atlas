@@ -57,6 +57,27 @@ tr {
     user-select: none;
 }
 
+/*
+ * Visualize term hierarchy
+ */
+.term-depth-1 {
+    padding-left: .5em;
+}
+
+.term-depth-1::before {
+    content: '> ';
+    white-space: nowrap;
+}
+
+.term-depth-2 {
+    padding-left: 1em;
+}
+
+.term-depth-2::before {
+    content: '>> ';
+    white-space: nowrap;
+}
+
 /* =============================================================================
  *   Morphological box edit form styling
  * ========================================================================== */
