@@ -78,7 +78,7 @@ tr {
     padding: .2rem .7rem;
 }
 
-#edit-terms-container-title {
+.terms-container-title .form-type-item {
     margin-bottom: 0;
 }
 

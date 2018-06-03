@@ -134,6 +134,8 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
   $form['terms_container']['title'] = [
     '#type' => 'item',
     '#title' => t('Values'),
+    '#prefix' => '<span class="terms-container-title">',
+    '#suffix' => '</span>',
   ];
 
   if (isset($form_state['no_terms'])) {
@@ -173,6 +175,11 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
       '#type' => 'hidden',
       '#value' => isset($termTree[$key]) ? $termTree[$key]->tid : -1,
     ];
+
+    $form['terms_container'][$delta]['weight'] = array(
+      '#type' => 'hidden',
+      '#value' => isset($termTree[$key]) ? $termTree[$key]->weight : $key,
+    );
 
     $form['terms_container'][$delta]['remove_term'] = [
       '#type' => 'submit',
@@ -368,6 +375,7 @@ function morphsearch_edit_vocabulary_save($form, &$form_state) {
           if (!empty($term['name'])) {
             $morphTerm->vid = $vocabulary->vid;
             $morphTerm->name = $term['name'];
+            $morphTerm->weight = $term['weight'];
             taxonomy_term_save($morphTerm);
           }
         }
