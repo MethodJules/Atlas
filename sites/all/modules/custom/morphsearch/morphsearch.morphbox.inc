@@ -218,6 +218,15 @@ function morphsearch_get_vocabulary_edit($form, &$form_state, $vocabulary_id) {
     '#weight' => 100,
   ];
 
+  // edit term order and hierarchy using standard taxonomy form
+  if ($voc !== FALSE) {
+    $form['terms_container']['change_order'] = [
+      '#markup' => l('Edit order / hierarchy', 'admin/structure/taxonomy/' . $voc->machine_name,
+        array('attributes' => array('class' => 'link-voc-edit'))),
+      '#weight' => 110,
+    ];
+  }
+
   $form['actions'] = array(
     '#type' => 'actions',
     '#weight' => 999,
