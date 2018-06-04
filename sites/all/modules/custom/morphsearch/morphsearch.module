@@ -301,11 +301,38 @@ function buildSearchHtml() {
       // add an empty select option for every select box
       $html .= "<option value=''></option>";
 
+      // build select optgroups
+      // TODO refactor function (sql query not needed, taxonomy_get_vocabularies)
+      $tree = taxonomy_get_tree($row->term_vid);
+      $openGrp = FALSE;
+      foreach ($tree as $term) {
+        if ($term->depth == 0) {
+
+          if ($openGrp) {
+            $openGrp = FALSE;
+            $html .= "</optgroup>";
+          }
+
+          if (empty(taxonomy_get_children($term->tid, $row->term_vid))) {
+            $html .= "<option value='$term->tid'>$term->name</option>";
+          } else {
+            // level 1 optgroup
+            $html .= "<optgroup label='$term->name'>";
+            $openGrp = TRUE;
+          }
+
+        } else {
+          // nested optgroups not allowed by definition. Visualize hierarchies of level 2+ using '-'.
+          if ($term->depth > 1) {
+            $html .= "<option value='$term->tid'>" . str_repeat('-', $term->depth) . ' ' . $term->name. "</option>";
+          } else {
+            $html .= "<option value='$term->tid'>$term->name</option>";
+          }
+        }
+      }
+
       $currentLabel = $row->vocabulary_name;
     }
-
-    // add all options to the current select box
-    $html .= "<option value='$row->tid'>$row->term_name</option>";
   }
 
   // close tags after last element
