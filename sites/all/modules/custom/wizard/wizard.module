@@ -183,3 +183,31 @@ function wizard_preprocess_node(&$variables) {
     );
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function wizard_form_hypothesis_node_form_alter(&$form, &$form_state, $form_id) {
+  $form['#after_build'][] = '_wizard_add_css_after_build';
+}
+
+/**
+ * Adds CSS to the hypothesis add/edit pages.
+ */
+function _wizard_add_css_after_build($form, &$form_state) {
+  $form['#attached']['css'][] = array(
+    'data' => drupal_get_path('module', 'wizard') . '/css/wizard_form.css',
+    'type' => 'file',
+    'scope' => 'footer',
+    'group' => CSS_THEME,
+  );
+  return $form;
+}
+
+/**
+ * Implements hook_views_api().
+ * Needed for the module's view in 'wizard.views_default.inc' to get created during install.
+ */
+function wizard_views_api($module = NULL, $api = NULL) {
+  return array("api" => "3.0");
+}

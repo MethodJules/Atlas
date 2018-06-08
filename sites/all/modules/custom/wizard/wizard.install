@@ -146,15 +146,9 @@ function _wizard_installed_fields() {
           ),
         ),
         'sort' => array(
-          'direction' => 'ASC',
-          'property' => 'title',
-          'type' => 'property',
+          'type' => 'none',
         ),
-        'target_bundles' => array(
-          'projekt' => 'projekt',
-          'forschungsergebnis' => 'forschungsergebnis',
-          'hypothesis' => 'hypothesis',
-        ),
+        'target_bundles' => array(),
       ),
       'target_type' => 'node',
     ),
@@ -223,15 +217,9 @@ function _wizard_installed_fields() {
           ),
         ),
         'sort' => array(
-          'direction' => 'ASC',
-          'property' => 'title',
-          'type' => 'property',
+          'type' => 'none',
         ),
-        'target_bundles' => array(
-          'projekt' => 'projekt',
-          'forschungsergebnis' => 'forschungsergebnis',
-          'hypothesis' => 'hypothesis',
-        ),
+        'target_bundles' => array(),
       ),
       'target_type' => 'node',
     ),
@@ -300,15 +288,9 @@ function _wizard_installed_fields() {
           ),
         ),
         'sort' => array(
-          'direction' => 'ASC',
-          'property' => 'title',
-          'type' => 'property',
+          'type' => 'none',
         ),
-        'target_bundles' => array(
-          'projekt' => 'projekt',
-          'forschungsergebnis' => 'forschungsergebnis',
-          'hypothesis' => 'hypothesis',
-        ),
+        'target_bundles' => array(),
       ),
       'target_type' => 'node',
     ),
@@ -463,6 +445,7 @@ function _wizard_installed_instances() {
       'type' => 'text_textarea_with_summary',
       'weight' => 3,
     ),
+    'format' => 'filtered_html',
   );
 
   // Exported field_instance: 'node-hypothesis-field_hyp_1_links'.
@@ -476,6 +459,7 @@ function _wizard_installed_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -506,12 +490,19 @@ function _wizard_installed_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'active' => 0,
-      'module' => 'options',
+      'active' => 1,
+      'module' => 'entityreference_view_widget',
       'settings' => array(
+        'allow_duplicates' => 0,
         'apply_chosen' => '',
+        'close_modal' => 1,
+        'pass_argument' => 1,
+        'pass_arguments' => '',
+        'rendered_entity' => 0,
+        'view' => 'hypothesislinks|entityreference_view_widget_hypothesis_links',
+        'view_mode' => 'full',
       ),
-      'type' => 'options_select',
+      'type' => 'entityreference_view_widget',
       'weight' => 4,
     ),
   );
@@ -596,12 +587,13 @@ function _wizard_installed_instances() {
       'type' => 'text_textarea_with_summary',
       'weight' => 6,
     ),
+    'format' => 'filtered_html',
   );
 
   // Exported field_instance: 'node-hypothesis-field_hyp_2_links'.
   $field_instances['node-hypothesis-field_hyp_2_links'] = array(
     'bundle' => 'hypothesis',
-    'default_value' => NULL,
+    'default_value' => array(),
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -609,6 +601,7 @@ function _wizard_installed_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -640,11 +633,18 @@ function _wizard_installed_instances() {
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'options',
+      'module' => 'entityreference_view_widget',
       'settings' => array(
+        'allow_duplicates' => 0,
         'apply_chosen' => '',
+        'close_modal' => 1,
+        'pass_argument' => 1,
+        'pass_arguments' => '',
+        'rendered_entity' => 0,
+        'view' => 'hypothesislinks|entityreference_view_widget_hypothesis_links',
+        'view_mode' => 'full',
       ),
-      'type' => 'options_select',
+      'type' => 'entityreference_view_widget',
       'weight' => 7,
     ),
   );
@@ -729,12 +729,13 @@ function _wizard_installed_instances() {
       'type' => 'text_textarea_with_summary',
       'weight' => 9,
     ),
+    'format' => 'filtered_html',
   );
 
   // Exported field_instance: 'node-hypothesis-field_hyp_3_links'.
   $field_instances['node-hypothesis-field_hyp_3_links'] = array(
     'bundle' => 'hypothesis',
-    'default_value' => NULL,
+    'default_value' => array(),
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -742,6 +743,7 @@ function _wizard_installed_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -773,11 +775,18 @@ function _wizard_installed_instances() {
     ),
     'widget' => array(
       'active' => 1,
-      'module' => 'options',
+      'module' => 'entityreference_view_widget',
       'settings' => array(
+        'allow_duplicates' => 0,
         'apply_chosen' => '',
+        'close_modal' => 1,
+        'pass_argument' => 1,
+        'pass_arguments' => '',
+        'rendered_entity' => 0,
+        'view' => 'hypothesislinks|entityreference_view_widget_hypothesis_links',
+        'view_mode' => 'full',
       ),
-      'type' => 'options_select',
+      'type' => 'entityreference_view_widget',
       'weight' => 10,
     ),
   );

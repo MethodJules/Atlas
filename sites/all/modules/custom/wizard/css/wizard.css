@@ -2,7 +2,7 @@
  * @file
  * wizard.css
  *
- * Styles you add here will load only for content type "hypotesis".
+ * Styles you add here will load only for content type "hypothesis".
  * If styles are integrated into a global stylesheet (some) styles
  * should be restricted with further classes e.g. .node-hypothesis
  * to affect only hypothesis nodes.
@@ -46,4 +46,18 @@ fieldset {
  * ========================================================================== */
 #block-views-searchresults-block {
     display: none;
+}
+
+/* =============================================================================
+ *   Hypothesis add links modal
+ * ========================================================================== */
+#modal-content .form-item-items-per-page label {
+    width: unset;
+    float: unset;
+}
+
+#modal-content .views-exposed-form .form-select {
+    margin: unset;
+    padding: unset;
+    line-height: unset;
 }

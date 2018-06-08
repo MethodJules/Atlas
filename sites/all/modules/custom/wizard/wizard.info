@@ -5,3 +5,5 @@ core = 7.x
 dependencies[] = morphsearch
 dependencies[] = morphsearch_searchresults
 dependencies[] = form_wissenskarte_module
+dependencies[] = views
+dependencies[] = entityreference_view_widget
