@@ -142,8 +142,9 @@ function wizard_preprocess_node(&$variables) {
       $fieldset = array(
         'element' => array(
           '#type' => 'fieldset',
-          '#title' => $group['title']['#items'][0]['value'],
-          '#value' => $group['description']['#items'][0]['value'],
+          // safe_value instead of value. value does not include filtered html (e.g. processed by bilbio reference filter)
+          '#title' => $group['title']['#items'][0]['safe_value'],
+          '#value' => $group['description']['#items'][0]['safe_value'],
           '#children' => '<div>',
           '#attributes' => array(
             'class' => array('hypothesis'),
