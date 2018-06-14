@@ -154,11 +154,15 @@ function wizard_preprocess_node(&$variables) {
       );
 
       // add fieldset tooltip (link titles with content type icon)
-      $fieldset['element']['#value'] .= '<div class="tooltip">';
-      foreach ($nodeTooltips as $tooltip) {
-        $fieldset['element']['#value'] .= '<div class="icon ' . $tooltip['type'] . '">' . check_plain($tooltip['title']) .'</div>';
+      if (!empty($nodeTooltips)) {
+        $fieldset['element']['#attributes']['class'][] = 'has-tooltip';
+
+        $fieldset['element']['#value'] .= '<div class="tooltip">';
+        foreach ($nodeTooltips as $tooltip) {
+          $fieldset['element']['#value'] .= '<div class="icon ' . $tooltip['type'] . '">' . check_plain($tooltip['title']) .'</div>';
+        }
+        $fieldset['element']['#value'] .=  '</div>';
       }
-      $fieldset['element']['#value'] .=  '</div>';
 
       // content will be printed separately in node--hypothesis.tpl.php
       $variables['content']['fieldsets'][] = $fieldset;
