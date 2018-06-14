@@ -1,0 +1,4 @@
+name = xnavi_admin
+description = provides a admin ui for xnavi
+core = 7.x
+package = x.Navi
