@@ -40,6 +40,14 @@ fieldset {
     margin-bottom: 1em;
 }
 
+.refLink {
+    text-decoration: none;
+}
+
+.refLink:hover {
+    color: unset;
+}
+
 
 /* =============================================================================
  *   Hypothesis search result block initially hidden
