@@ -265,7 +265,7 @@ function wizard_get_references_form($references) {
       $citeKeyHtml = _biblio_citekey_print($ref);
       $citeKeyHtml = wizard_add_reference_tooltip($citeKeyHtml, $ref);
 
-      $listItems[] = '<span id="reference' . $refNr . '">' . $citeKeyHtml . "</span>";
+      $listItems[] = '<span id="reference' . $refNr . '"><a name="ref' . $refNr . '">' . $citeKeyHtml . ' </a></span>';
     }
 
     $form = array (
