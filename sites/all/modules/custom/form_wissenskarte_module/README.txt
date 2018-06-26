@@ -10,6 +10,7 @@ REQUIREMENTS
 This module requires the following modules:
 
  * Morphsearch: To link drawn knowledge map areas to your portal's content.
+ * views, entityreference_view_widget: To select portal content in a modal window for knowledge map areas.
 
 
 RECOMMENDED MODULES
