@@ -785,12 +785,37 @@ Indeko.MorphBox.convertMorphsearch = function() {
 
 	// TODO direct url prototype
 	// add a textfield for map area direct links
-	var htmlDirectUrl = '<div class="form-item form-type-textfield">' +
+	var htmlDirectUrl = '<div class="form-item form-type-textfield direct-url">' +
 		'<input type="text" id="direct-url" class="direct-url form-text" value="" placeholder="direct URL" style="width: 100%;"></div>' +
 		'<div><b>OR<b></div>';
   $('#fulltextsearchrow').before(htmlDirectUrl);
   $('#direct-url').keyup(Indeko.MorphBox.getSelectedValuesFromMorphBox);
 
+  // TODO internal url prototype
+  var elemInternalUrl = $('#edit-field-internal-reference');
+  if (elemInternalUrl.length > 0) {
+    elemInternalUrl.detach();
+    $('.form-type-textfield.direct-url').append(elemInternalUrl);
+    $('#edit-field-internal-reference-und-add-more').val(Drupal.t('Add internal url'));
+    elemInternalUrl.find('.clearfix').show();
+
+    Drupal.behaviors.morphmapping = {
+      attach: function(context, settings) {
+        $('#edit-field-internal-reference').ajaxSuccess(function(event, xhr, settings, data) {
+
+          var ajaxInsert = $.parseHTML(data[1].data);
+          var nodeId = $(ajaxInsert).find('.entityreference-view-widget-checkbox').val();
+          var nodeTitle = $(ajaxInsert).find('label').text();
+
+          // update url if user selected content
+          if (nodeTitle.length > 0) {
+            $('#direct-url').val(Drupal.settings.basePath + 'node/' + nodeId);
+            Indeko.MorphBox.getSelectedValuesFromMorphBox();
+          }
+        });
+      }
+    };
+	}
 	Indeko.MorphBox.update(myimgmap.currentid);														// show selected morphological box items of current map area
 };
 
@@ -953,7 +978,7 @@ Indeko.ImageMap.hookMapAreas = function () {
 				// just treat as a normal link if it is not a search link
       	var href = $(this).attr('href');
       	if (href.indexOf(Drupal.settings.morphsearch.searchPath) === -1) {
-      		if(href.indexOf('http') === -1) {
+      		if(href.indexOf('http') === -1 && href.indexOf(Drupal.settings.basePath) === -1) {
       			window.location.href = 'http://' + href;
           } else {
       			return true;

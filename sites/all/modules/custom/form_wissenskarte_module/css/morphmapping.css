@@ -123,3 +123,34 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+/* Internal link spacing (knowledgemap morphsearch block) */
+#edit-field-internal-reference .form-item > * {
+    display: none;
+}
+
+#edit-field-internal-reference .ervw-add-items {
+    margin: 0;
+    float: right;
+}
+
+.block.knowledgemap {
+    z-index: 999 !important;
+}
+
+/* Internal link modal windows spacing */
+#modal-content .form-item-items-per-page label {
+    width: unset;
+    float: unset;
+}
+
+#modal-content .views-exposed-form .form-select {
+    margin: unset;
+    padding: unset;
+    line-height: unset;
+}
+
+#modal-content .widget-checkbox,
+#modal-content .widget-type {
+    width: 1em;
+}
