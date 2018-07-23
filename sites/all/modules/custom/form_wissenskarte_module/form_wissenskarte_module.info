@@ -5,7 +5,7 @@ package = Knowledge Map
 
 dependencies[] = morphsearch
 dependencies[] = morphsearch_searchresults
+dependencies[] = entityreference_view_widget
 dependencies[] = entityreference
 dependencies[] = fivestar
 dependencies[] = views
-dependencies[] = entityreference_view_widget

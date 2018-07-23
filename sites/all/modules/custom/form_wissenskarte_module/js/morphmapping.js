@@ -89,7 +89,12 @@ function  initView(ViewMode) {
 			instanciateAreaDescription();							// load GUI
 			myimgmap.setMapHTML(loadedValue);						// load image map areas
 			Indeko.ImageMap.hookSaveButton(); 						// attach client side validation to save button
-			Indeko.MorphBox.convertMorphsearch();                   // converts the standard protal search block to be usable to link content to knowledge maps
+
+			// converts the standard portal search block to be usable to link content to knowledge maps
+			if ($(Indeko.MorphBox.element) > 0) {
+        Indeko.MorphBox.convertMorphsearch();
+      }
+
 			myimgmap.loadStrings(imgmapStrings);					// load status messages
             makeUnselectable($('#edit-field-wk-bild').find('img'));
 		} else if (l_oImageView.length > 0) {
@@ -285,14 +290,17 @@ function validateLastArea(){
 		l_oValidationResult.isAreaValid = false;
 	}
 
-	/* Check if the drawn area is linked to content on the website. */
-	var searchObject = Indeko.Morphsearch.toArray();
-	if ($.isEmptyObject(searchObject) && myimgmap.areas[0] !== null) {
-		l_oValidationResult.isMorphboxValid = false;
-	} else {
-		l_oValidationResult.isMorphboxValid = true;
-	}
-
+  if ($(Indeko.MorphBox.element) > 0) {
+    /* Check if the drawn area is linked to content on the website. */
+    var searchObject = Indeko.Morphsearch.toArray();
+    if ($.isEmptyObject(searchObject) && myimgmap.areas[0] !== null) {
+      l_oValidationResult.isMorphboxValid = false;
+    } else {
+      l_oValidationResult.isMorphboxValid = true;
+    }
+  } else {
+    l_oValidationResult.isMorphboxValid = true;
+  }
 
 
 	return l_oValidationResult;
@@ -386,7 +394,9 @@ function gui_addArea(id) {
 	$('<option value="circle">' + Drupal.t("Circle") + '</option>').appendTo(l_oSelect);
 	$('<option value="poly">' + Drupal.t("Polygon") + '</option>').appendTo(l_oSelect);
 	l_oSelect.val("rect");
-	l_oSelect.chosen({disable_search: true}); // transform to chosen select box
+	if (jQuery.chosen) {
+    l_oSelect.chosen({disable_search: true}); // transform to chosen select box
+  }
 
 	$('<Label class="img_label">' + Drupal.t("Title") + ':</Label>').appendTo(props[id]);
 	$('<input type="text" name="img_alt" class="img_alt" value="">').appendTo(props[id]);
@@ -712,10 +722,13 @@ Indeko.MorphBox.update = function(id) {
 		return false;
 	}
 
-	var jsonString = myimgmap.areas[id].json;
-	//jsonString = decodeURI(jsonString);
-	var searchObject = JSON.parse(jsonString);
-	Indeko.Morphsearch.toSearchblock(searchObject);
+  if ($(Indeko.MorphBox.element) > 0) {
+    var jsonString = myimgmap.areas[id].json;
+    //jsonString = decodeURI(jsonString);
+    var searchObject = JSON.parse(jsonString);
+    Indeko.Morphsearch.toSearchblock(searchObject);
+  }
+
 	Indeko.MorphBox.selectItems();
 };
 
@@ -725,18 +738,21 @@ Indeko.MorphBox.update = function(id) {
  */
 Indeko.MorphBox.selectItems = function() {
 
-	// TODO direct url prototype
-	// check if href is a search string or direct url
-	var href = myimgmap.areas[myimgmap.currentid].ahref;
-	if (href.indexOf(Drupal.settings.morphsearch.searchPath) === -1) {
-    $('#direct-url').val(myimgmap.areas[myimgmap.currentid].ahref);
-  } else {
-    // todo testing 18.10
-    var jsonString = myimgmap.areas[myimgmap.currentid].json;
-    //jsonString = decodeURI(jsonString);
-    var searchObject = JSON.parse(jsonString);
-    Indeko.Morphsearch.toSearchblock(searchObject);
-	}
+  if ($(Indeko.MorphBox.element) > 0) {
+		// TODO direct url prototype
+    // check if href is a search string or direct url
+    var href = myimgmap.areas[myimgmap.currentid].ahref;
+    if (href.indexOf(Drupal.settings.morphsearch.searchPath) === -1) {
+      $('#direct-url').val(myimgmap.areas[myimgmap.currentid].ahref);
+    } else {
+      // todo testing 18.10
+      var jsonString = myimgmap.areas[myimgmap.currentid].json;
+      //jsonString = decodeURI(jsonString);
+      var searchObject = JSON.parse(jsonString);
+      Indeko.Morphsearch.toSearchblock(searchObject);
+    }
+  }
+
 };
 
 /*
@@ -744,8 +760,11 @@ Indeko.MorphBox.selectItems = function() {
  * !!! Has to be changed depending on the representation of the morphological box !!!
  */
 Indeko.MorphBox.reset = function() {
-	Indeko.Morphsearch.reset();
-	Indeko.Morphsearch.elemFulltext.val(''); // ID 34 do not reset fulltext field on reset, so have to do it here
+
+  if ($(Indeko.MorphBox.element) > 0) {
+    Indeko.Morphsearch.reset();
+    Indeko.Morphsearch.elemFulltext.val(''); // ID 34 do not reset fulltext field on reset, so have to do it here
+  }
 
 	// TODO direct url prototype
 	// clear the url textfield
@@ -822,23 +841,26 @@ Indeko.MorphBox.convertMorphsearch = function() {
 // todo testing janzen 18.10
 Indeko.MorphBox.getSelectedValuesFromMorphBox = function(){
 
-  // TODO direct url prototype
-  // if direct url given ignore search box parameters
-  if ($('#direct-url').val().length > 0) {
-    myimgmap.areas[myimgmap.currentid].ahref = encodeURI($('#direct-url').val());
-    myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
-  } else {
-    var searchObject = Indeko.Morphsearch.toArray();
-    if (!$.isEmptyObject(searchObject)) {
-      var jsonString = JSON.stringify(searchObject);
-      //jsonString = encodeURI(jsonString);
-
-      myimgmap.areas[myimgmap.currentid].ahref = encodeURI(Indeko.Morphsearch.toUrl(searchObject));
-      myimgmap.areas[myimgmap.currentid].json = jsonString;
-      Indeko.MorphBox.element.removeClass('addAreaError');
+  if ($(Indeko.MorphBox.element) > 0) {
+		// TODO direct url prototype
+    // if direct url given ignore search box parameters
+    if ($('#direct-url').val().length > 0) {
+      myimgmap.areas[myimgmap.currentid].ahref = encodeURI($('#direct-url').val());
       myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
+    } else {
+      var searchObject = Indeko.Morphsearch.toArray();
+      if (!$.isEmptyObject(searchObject)) {
+        var jsonString = JSON.stringify(searchObject);
+        //jsonString = encodeURI(jsonString);
+
+        myimgmap.areas[myimgmap.currentid].ahref = encodeURI(Indeko.Morphsearch.toUrl(searchObject));
+        myimgmap.areas[myimgmap.currentid].json = jsonString;
+        Indeko.MorphBox.element.removeClass('addAreaError');
+        myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
+      }
     }
-	}
+  }
+
 };
 
 /*
@@ -920,12 +942,14 @@ Indeko.ImageMap.hookSaveButton = function () {
 				return;
 			}
 
-			// validate linked content
-			if ($.isEmptyObject(area.ahref)) {
-				currentCanvasArea.addClass('canvasError');
-				Indeko.MorphBox.element.addClass('addAreaError');
-				l_bIsValid = false;
-			}
+			// validate linked content through MorphBox
+      if ($(Indeko.MorphBox.element) > 0) {
+        if ($.isEmptyObject(area.ahref)) {
+          currentCanvasArea.addClass('canvasError');
+          Indeko.MorphBox.element.addClass('addAreaError');
+          l_bIsValid = false;
+        }
+      }
 
 			// validate area titles
 			if ($.isEmptyObject(area.atitle)) {
@@ -949,7 +973,7 @@ Indeko.ImageMap.hookSaveButton = function () {
 			var jsonString = '';
 			Indeko.ImageMap.elemTags.val(-1); // clear tags field
 			$.each(allAreas, function (index, area) {
-				if (!$.isEmptyObject(area.json)) {
+				if (!$.isEmptyObject(area.json) && area.json != "undefined") {
 					jsonString = area.json;
 					var searchObject = JSON.parse(jsonString);
 
