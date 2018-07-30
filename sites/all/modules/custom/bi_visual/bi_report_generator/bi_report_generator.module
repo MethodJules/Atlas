@@ -1,0 +1,32 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 22.04.18
+ * Time: 11:51
+ */
+
+
+/**
+ * Implements hook_menu().
+ */
+function bi_report_generator_menu(){
+    $items['bi_visual/generator'] = array(
+        'title' => '',
+        'description' => 'Gnerator for BI',
+        'page callback' => 'bi_report_generator_generator',
+        'access callback' => array(TRUE),
+        'file' => 'bi_report_generator.generator.inc',
+    );
+
+
+    $items['bi_visual/%ctools_js/show/modal'] = array(
+        'title' => '',
+        'page callback' => 'bi_report_generator_modal_callback',
+        'page arguments' => array(1),
+        'access callback' => array(TRUE),
+        'file' => 'bi_report_generator.generator.inc',
+    );
+
+    return $items;
+}

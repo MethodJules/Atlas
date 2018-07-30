@@ -1,0 +1,4 @@
+name = xnavi_epub_cart
+descpription = Adds a cart to the epub function
+core = 7.x
+dependencies[] = xnavi_epub

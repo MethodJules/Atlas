@@ -42,6 +42,8 @@
       z = d3.scale.ordinal().range(["blue", "red", "orange", "green"]),
       div = (settings.id) ? settings.id : 'visualization';
 
+    alert('sdddkd');
+    console.log(rows);
     var svg = d3.select('#' + div).append("svg")
       .attr("width", w)
       .attr("height", h)

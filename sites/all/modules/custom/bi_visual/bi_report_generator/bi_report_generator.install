@@ -1,0 +1,94 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 06.05.18
+ * Time: 20:17
+ */
+
+/**
+ * Implements hook_install()
+ */
+function bi_report_generator_install() {
+    $t = get_t(); // instantiate the t function
+
+    // Define content type report
+    $content_type = array(
+        'type' => 'report',
+        'name' => t('Report'),
+        'description' => t('Create a new report'),
+        'title_label' => t('Report Title'),
+        'base' => 'node_content',
+        'custom' => TRUE,
+    );
+
+    $node_type = node_type_set_defaults($content_type);
+
+    node_type_save($node_type); //Save the node type
+
+    //Create fields
+    $fields = array(
+        'report_html' => array(
+            'field_name' => 'report',
+            'type' => 'text_long',
+            'cardinality' => 1,
+        ),
+    );
+
+    //Loop through fields and create them one by one
+    foreach ($fields as $field) {
+        field_create_field($field);
+    }
+
+    //Attach fields to content type
+    $instances = array(
+        'report_html' => array(
+          'field_name' => 'report',
+          'label' => t('Report'),
+          'required' => FALSE,
+          'widget' => array('type' => 'text_textarea'),
+          'settings' => array('text_processing' => 1), // Allow text processing
+          'format' => 'full_html',
+        ),
+    );
+
+    //Loop through instances
+    foreach ($instances as $instance) {
+        $instance['entity_type'] = 'node';
+        $instance['bundle'] = 'report'; //Attach the instance to the content type
+        field_create_instance($instance);
+    }
+
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+
+function bi_report_generator_uninstall() {
+    // Remove existing content
+
+    $query = 'SELECT nid ';
+    $query .= 'FROM {node} ';
+    $query .= 'WHERE {node}.type = :type ';
+
+    $result = db_query($query, array(':type' => 'report'));
+
+    $nids = array();
+    foreach ($result as $row) {
+        $nids[] = $row->nid;
+    }
+
+    node_delete_multiple($nids);
+
+    //Delete fields and instances
+    foreach (field_info_instances('node', 'report') as $field_name=>$instance) {
+        field_delete_instance($instance);
+    }
+
+    //Delete content type
+    node_type_delete('report');
+
+    //Purge field batch
+    field_purge_batch(1000);
+}

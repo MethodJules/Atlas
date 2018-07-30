@@ -1,0 +1,72 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 28.06.18
+ * Time: 14:32
+ */
+
+
+/**
+ * Implements hook_schema
+ *
+ */
+function xnavi_epub_schema() {
+    $schema['xnavi_epub'] = array(
+        'description' => 'The base table for handling epub functionality',
+        'fields' => array(
+            //nid
+            'nid' => array(
+                'description' => 'The nid for the epub',
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            //uid
+            'uid' => array(
+                'description' => 'The uid for the epub',
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'epub_id' =>array(
+                'description' => 'The nid for the epub',
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'datetime' => array(
+                'description' => 'The nid for the epub',
+                'mysql_type' => 'DATETIME',
+                'not null' => TRUE,
+            ),
+            'already_downloaded' =>array(
+                'description' => 'The nid for the epub',
+                'type' => 'int',
+            ),
+
+        ),
+        'primary key' => array('epub_id'),
+    );
+
+
+    return $schema;
+}
+
+/**
+ * Implements hook_install()
+ */
+
+function xnavi_epub_install() {
+    variable_set('xnavi_epub_epub_id', 0);
+
+}
+
+/**
+ * Implements hook_uninstall
+ */
+function xnavi_uninstall() {
+    db_drop_table('xnavi_epub');
+    variable_del('xnavi_epub_epub_id');
+
+}

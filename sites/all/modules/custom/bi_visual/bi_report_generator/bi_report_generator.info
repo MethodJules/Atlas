@@ -1,0 +1,7 @@
+name = bi_report_generator
+description = Gnerates the data that will be visualized by bi_visual module
+core = 7.x
+
+dependencies[] = bi_visual
+files[] = bi_report_generator.install
+files[] = bi_report_generator.module

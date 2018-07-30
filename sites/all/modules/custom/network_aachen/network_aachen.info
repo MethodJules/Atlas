@@ -1,0 +1,3 @@
+name = network_aachen
+description = visualize the data from aachen
+core = 7.x

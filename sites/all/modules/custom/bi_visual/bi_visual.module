@@ -16,7 +16,7 @@ function bi_visual_menu()
     'title' => '',
     'description' => 'Visualization of aggregated drill down layers (taxonomy vocabularies and terms)',
     'page callback' => 'bi_visual',
-    'access callback' => TRUE,
+    'access callback' => array(TRUE),
     'page arguments' => array(2),
     'file' => 'bi_visual.pages.inc',
   );
@@ -25,9 +25,17 @@ function bi_visual_menu()
     'title' => '',
     'description' => 'Visualization of the lowest drill down layer (nodes)',
     'page callback' => 'bi_drilldown',
-    'access callback' => TRUE,
+    'access callback' => array(TRUE),
     'page arguments' => array(2),
     'file' => 'bi_visual.pages.inc',
+  );
+
+  $items['bi_visual/save_report'] = array(
+      'title' => '',
+      'description' => 'Saving report',
+      'page callback' => 'bi_report_save_report',
+      'access callback' => array(TRUE),
+      'file' => 'bi_report_save_report.inc',
   );
 
   return $items;

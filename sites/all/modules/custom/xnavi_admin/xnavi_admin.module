@@ -1,0 +1,63 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 14.06.18
+ * Time: 09:54
+ */
+
+function xnavi_admin_menu() {
+    $items = array();
+
+    $items['xnavi/admin'] = array(
+        'type' => MENU_CALLBACK,
+        'page callback' => 'xnavi_admin_ui',
+        'access callback' => 'xnavi_admin_user_has_role',
+
+    );
+
+    return $items;
+}
+
+function xnavi_admin_ui() {
+    global $base_path;
+
+    //add css
+    drupal_add_css(drupal_get_path('module', 'xnavi_admin') . '/css/xnavi_admin.css');
+
+
+    $output[] = array(
+        '#theme' => 'item_list',
+        '#items' => array(
+            '<a href="' . $base_path . 'admin/config/search/apachesolr/setting">' . t('Suchserver') . '</a>',
+            '<a href="' . $base_path . 'admin/config/search/morphsearch">' . t('Morphologische Suche') . '</a>',
+            '<a href="' . $base_path . 'admin/config/content/node_creation_links">' . t('Elemente verwalten') . '</a>'
+        ),
+        '#type' => 'ul',
+        '#attributes' => array('class' => 'list-class'),
+
+    );
+
+    $xnavi_ui = array(
+        '#markup' => '<p>HAllo dies ist xnavi</p>',
+
+    );
+
+
+
+    return $output;
+
+
+}
+
+function xnavi_admin_user_has_role() {
+    //load the currently logged in user
+    global $user;
+
+    //check if user has role
+    if(in_array('xnavi_Administrator', $user->roles)) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}

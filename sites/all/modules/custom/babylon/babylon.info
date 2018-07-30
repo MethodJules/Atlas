@@ -1,0 +1,3 @@
+name = babylon
+description = Module to test babylon
+core = 7.x

@@ -404,6 +404,7 @@ function d3_draw($vis) {
       'type' => 'setting',
     );
 
+    dsm($output);
     // Renders the html - .tpl.php if specified or default d3.tpl.php.
     return render($output);
   }

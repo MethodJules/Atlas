@@ -24,8 +24,25 @@
 function bi_visual($vid) {
   $output = '';
   $fields = get_taxonomy_fields_on_content_type();
+    //Checkliste mit allen items/links
+    variable_set('bi_dimensions', $fields);
 
-  // display detailed analysis of a vocabulary
+
+    //Dieses Code Snippet dient dazu die in der Form eingegeben Parameter zu übernehmen
+    //und das Chart dementsprechend auszugeben
+    $bi_flag = variable_get('bi_flag');
+    if($bi_flag) {
+        $keys = variable_get('bi_report_generator_keys');
+        foreach ($keys as $key) {
+            $fields_new[$key] =  $fields[$key];
+        }
+        //dsm($fields_new);
+
+        $fields = $fields_new;
+    }
+
+
+    // display detailed analysis of a vocabulary
   if ($fields[$vid]) {
 
     // get all taxonomy terms of the given vocabulary
@@ -66,6 +83,10 @@ function bi_visual($vid) {
       '#attributes' => array('class' => array('bi')),
     );
 
+
+
+
+
     // TODO platzsparenderes Design bis Aussehen geklärt
     drupal_add_css('ul.bi {display:flex; flex-wrap: wrap;}', 'inline');
 
@@ -73,12 +94,46 @@ function bi_visual($vid) {
       '#type' => 'item',
       '#title' => $fields[$vid]->name,
     );
+    //dsm($type_of_visualization);
+    //dsm($title);
+    //dsm($chartData);
 
-    // render html output
-    $output = render($type_of_visualization);
+
+    $button_css = '
+    #bi-save { background-color: #444;
+	display: block;
+	text-align: center;
+	color: #fff;
+	padding: 0.5rem;
+	box-shadow: 0px 1px 4px rgba(0,0,0,.2);
+	text-decoration: none;
+	font-size: .75rem;
+    }';
+
+    drupal_add_css($button_css, 'inline');
+
+
+
+    $output .= render($type_of_visualization);
     $output .= render($title);
+    dsm($chartData);
     $output .= _bi_visual_render_chart($chartData);
     $output .= _bi_visual_render_table($tableRows);
+    global $base_url;
+
+    //dsm($output);
+
+    variable_set('report', $output);
+    $destination = drupal_get_destination();
+    variable_set('report_destination', $destination);
+    //dsm($destination['destination']);
+
+    $output .= '<a id="bi-save" href="' . $base_url . '/bi_visual/save_report">Save</a>';
+
+
+
+      //dsm($output);
+
   }
 
   return $output;
@@ -109,11 +164,11 @@ function bi_drilldown($tid) {
     $result = $result->fetchAll();
 
     $data = array();
+
     foreach ($result as $line) {
       $data[] = array(check_plain($line->title), 1, $line->nid,
       );
     }
-
     $tableRows = array();
 
     foreach ($data as $entry) {
@@ -185,6 +240,7 @@ function get_taxonomy_fields_on_content_type($type = array()) {
     }
   }
 
+  //dsm($vocabularies);
   return $vocabularies;
 }
 
@@ -242,5 +298,14 @@ function _bi_visual_render_chart($data) {
     $html = d3_draw($chart);
   }
 
+  //dsm($html);
   return $html;
 }
+
+
+
+
+
+
+
+

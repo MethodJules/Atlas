@@ -1,0 +1,96 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 22.06.18
+ * Time: 14:31
+ */
+
+
+function xnavi_epub_menu() {
+
+    $items = array();
+
+
+    $items['epub/download'] = array(
+        'title' => t('Inhalt'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('form_xnavi_epub'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'xnavi_epub.form.inc',
+    );
+
+    //Administration
+    $items['admin/config/epub'] = array(
+        'title' => t('Administration of the ePub-Module'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('form_xnavi_epub_admin'),
+        'access arguments' => array('administer users'),
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'xnavi_epub_admin.form.inc',
+    );
+
+    return $items;
+}
+
+
+/**
+ * @param $node
+ * @param $view_mode
+ * @param $langcode
+ * Implements hook_node_view
+ */
+function xnavi_epub_node_view($node, $view_mode, $langcode) {
+    $form = drupal_get_form('form_xnavi_epub_add_epub_button');
+
+    $node->content['xnavi_epub_add_epub_button'] = $form;
+}
+
+function form_xnavi_epub_add_epub_button($form, &$form_state) {
+
+    drupal_add_css(drupal_get_path('module', 'xnavi_epub') .'/css/xnavi_epub.css');
+
+    $form['submit']['add_epub'] = array(
+        '#type' => 'image_button',
+        '#src' => drupal_get_path('module', 'xnavi_epub') .
+            '/images/icons8-epub-50.png',
+        '#submit' => array('xnavi_epub_add_node'),
+        '#attributes' => array('class' => array('xnavi_epub_add_button')),
+        //'#attributes' => array('class' => array('cd-add-to-cart')),
+    );
+
+    return $form;
+}
+
+
+function xnavi_epub_add_node($node){
+    if($node = menu_get_object()){
+        //Get the nid
+        $nid = $node->nid;
+    }
+
+    global $user;
+    $epub_id = variable_get('xnavi_epub_epub_id');
+
+
+
+    //TODO add nid and uid to database
+    //drupal_exit();
+    try {
+        $data = db_insert('xnavi_epub')
+            ->fields(array(
+                'nid' => $nid,
+                'uid' => $user->uid,
+                //'epub_id' => $epub_id,
+                'datetime' => format_date(time(), 'custom', 'Y-m-d H:i:s'),
+                'already_downloaded' => 0,
+            ))
+            ->execute();
+
+    } catch (Exception $e) {
+            watchdog_exception('xnavi_epub', $e);
+    }
+
+    return dsm('Zu Ihrem EPub hinzugefügt'); //TODO Löschen
+}

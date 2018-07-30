@@ -1,0 +1,175 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 15.06.18
+ * Time: 09:07
+ */
+
+/**
+ * Implements hook_menu
+ *
+ */
+
+function network_aachen_menu() {
+    $items = array();
+    $items['network/aachen'] = array(
+        'page callback' => 'network_aachen_page',
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+        'file' => 'network_aachen_page.inc'
+
+    );
+    return $items;
+}
+
+/**
+ * Implements hook_block_info()
+ */
+
+function network_aachen_block_info() {
+    $blocks['network_aachen'] = array(
+        'info' => t('Block for Network data from Aachen'),
+        'status' => TRUE,
+        'region' => 'sidebar_first',
+        'visibility' => BLOCK_VISIBILITY_LISTED,
+        'pages' => 'network/aachen',
+    );
+
+    $blocks['network_aachen_relationsart'] = array(
+        'info' => t('Block for Network data from Aachen (relationsart)'),
+        'status' => TRUE,
+        'region' => 'sidebar_first',
+        'visibility' => BLOCK_VISIBILITY_LISTED,
+        'pages' => 'network/aachen',
+    );
+
+
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view()
+ */
+
+function network_aachen_block_view($delta = '') {
+    $block = array();
+    switch ($delta) {
+        case 'network_aachen':
+            $block['subject'] = t('Auswahl');
+            $block['content'] = drupal_get_form('form_block_network_aachen');
+            break;/*
+        case 'network_aachen_relationsart':
+            $block['subject'] = t('Relationsart');
+            $block['content'] = drupal_get_form('form_block_network_aachen_relationsart');
+            break;
+        */
+    }
+    return $block;
+}
+
+/**
+ * Implements the form_block_network_aachen
+ */
+function form_block_network_aachen($form, &$form_state) {
+    $form['selected'] = array(
+        '#type' => 'select',
+        //'#title' => t('Select vis'),
+        '#options' => array(
+            0 => t('Einleitung'),
+            1 => t('Netzwerke'),
+        ),
+        '#default_value' => 0,
+        //'#description' => t('Set this to <em>Yes</em> if you would like this category to be selected by default.'),
+        '#prefix' => '<div id="network_aachen_ajax_wrapper">',
+        '#suffix' => '</div>',
+        '#ajax' => array(
+            'callback' => 'network_aachen_ajax_callback',
+            'event' => 'change',
+        ),
+    );
+
+    $form['relationsart_selected'] = array(
+        '#type' => 'select',
+        '#title' => t('Relationsart'),
+        '#options' => array(
+            0 => t('Bekanntheit'),
+            1 => t('Interesse'),
+            2 => t('Austausch besteht'),
+            3 => t('Austausch erwünscht'),
+        ),
+        '#default_value' => 0,
+        //'#description' => t('Set this to <em>Yes</em> if you would like this category to be selected by default.'),
+        '#prefix' => '<div id="network_aachen_ajax_wrapper_relationsart">',
+        '#suffix' => '</div>',
+        '#ajax' => array(
+            'callback' => 'network_aachen_ajax_callback_relationsart',
+            'event' => 'change',
+        ),
+    );
+
+
+
+
+    $form['#attached']['js'] = array(
+        array(
+          'type' => 'file',
+          'data' => drupal_get_path('module', 'network_aachen') . '/js/network_aachen.js',
+        ),
+    );
+    return $form;
+
+}
+
+function form_block_network_aachen_relationsart($form, &$form_state) {
+
+
+
+
+    return $form;
+}
+
+
+
+function network_aachen_ajax_callback($form, &$form_state){
+    //dsm($form_state);
+    //dsm($form);
+    //command array for firing ajax callbacks
+    $commands = array();
+    //insert HTML update content
+    $commands[] = ajax_command_html('#network_aachen_ajax_wrapper_relationsart', render($form['relationsart_selected']));
+    //include custom JavaScript function from js file
+    $commands[] = array(
+        //The command will used in the js file
+        'command' => 'network_aachen_callback',
+        'selectedValue' => $form_state['values']['selected'],
+    );
+
+    //dsm($commands);
+    //return all commands
+    return array(
+        '#type' => 'ajax',
+        '#commands' => $commands,
+    );
+}
+
+function network_aachen_ajax_callback_relationsart($form, &$form_state) {
+
+    //dsm($form);
+    $commands = array();
+    $commands[] = ajax_command_html('#network_aachen_ajax_wrapper_relationsart', render($form['relationsart_selected']));
+    //include custom JavaScript function from js file
+    $commands[] = array(
+        //The command will used in the js file
+        'command' => 'network_aachen_callback_relationsart',
+        'selectedValue_visualization' => $form_state['values']['relationsart_selected'],
+    );
+
+    return array(
+        '#type' => 'ajax',
+        '#commands' => $commands,
+    );
+
+}
+

@@ -1,0 +1,83 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: julien
+ * Date: 04.07.18
+ * Time: 14:39
+ */
+
+
+/**
+ * Implements hook_node_view().
+ */
+function xnavi_epub_cart_node_view($node, $view_mode, $langcode)
+{
+    global $base_url;
+    //load css file
+    drupal_add_css(drupal_get_path('module', 'xnavi_epub_cart') . '/css/xnavi_epub_cart.css');
+    //load js file
+    drupal_add_js(drupal_get_path('module', 'xnavi_epub_cart') . '/js/xnavi_epub_cart.js');
+    //drupal_add_js(array('xnavi_epub_cart' => array(
+    //                    'modulepath' => $base_url . '/' . drupal_get_path('module', 'xnavi_epub_cart'))),
+    //                    'setting');
+    drupal_add_library('system', 'jquery.cookie');
+
+    if ($view_mode == 'full') {
+        $setting = array('xnavi_epub_cart' => array(
+           'currentNid' => $node->nid,
+           'modulepath' => $base_url . '/' . drupal_get_path('module', 'xnavi_epub_cart'),
+           'base_path' => $base_url,
+        ));
+
+        $node->content['#attached']['js'][] = array(
+            'data' => $setting,
+            'type' => 'setting',
+        );
+    }
+
+    $cart = array(
+        '#prefix' => '<div class="cd-cart-container empty">',
+        '#suffix' => '</div>',
+        'hrefing' => array(
+            '#prefix' => '<a href="#0" class="cd-cart-trigger">',
+            '#suffix' => '</a>',
+            '#type' => 'markup',
+            '#markup' => '<ul class="count"><li>0</li><li>0</li></ul>',
+            ),
+        'cd-cart' => array(
+            '#prefix' => '<div class="cd-cart">',
+            '#suffix' => '</div>',
+            'wrapper' => array(
+                '#prefix' => '<div class="wrapper">',
+                '#suffix' => '</div>',
+                '#type' => 'markup',
+                '#markup' => '<header><h2>Cart</h2><span class="undo">Item removed. <a href="#0">Undo</a></span></header>',
+            ),
+            'body' => array(
+                '#prefix' => '<div class="cart-body">',
+                '#suffix' => '</div>',
+                'epub_list' => array(
+                    '#theme' => 'item_list',
+                    '#items' => array(
+
+                    ),
+                ),
+            ),
+            'footer' => array(
+                '#prefix' => '<footer>',
+                '#suffix' => '</footer>',
+                '#type' => 'markup',
+                'markup' => '<a href="#0" class="checkout btn"><em>Checkout - $ <span>0</span></em></a>',
+            ),
+        ),
+
+
+
+
+
+    );
+
+
+
+    return $node->content['cart'] = $cart;
+}

@@ -27,6 +27,7 @@
       legend = {w: (w - p[3] - p[1] - radius * 2), h: h - p[0] - p[2]},
       color = d3.scale.ordinal().range(['blue', 'red', 'orange', 'green', 'purple', 'lightblue', 'palevioletred', 'orangered', 'mediumpurple', 'pink', 'yellow', 'olive', 'mediumorchid']),
       div = (settings.id) ? settings.id : 'visualization';
+    console.log(wedges);
 
     var svg = d3.select('#' + div).append("svg")
       .attr("width", w)

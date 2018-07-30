@@ -1,0 +1,25 @@
+div.ctools-modal-content {
+    background-color: grey;
+}
+
+.form-radios,
+.form-checkboxes {
+    margin-left: 5px;
+}
+
+.form-radios .form-item,
+.form-checkboxes .form-item {
+    font-size: 1.2em;
+    width: 19%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0px;
+}
+
+#form-bi-report-generator-select-dimensions {
+    border: 1px;
+    border-style: solid;
+    border-color: black;
+}

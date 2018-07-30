@@ -1,0 +1,13 @@
+.list-class li a {
+    background-color: #444;
+    display: block;
+    text-align: center;
+    color: #FFF;
+    padding: 0.5rem;
+    box-shadow: 0px 1px 4px rgba(0,0,0,.2);
+    text-decoration: none;
+    font-size: .75rem;
+    list-style-type: square;
+
+}
+
