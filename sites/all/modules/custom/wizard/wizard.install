@@ -485,7 +485,7 @@ function _wizard_installed_instances() {
     ),
     'field_name' => 'field_hyp_1_links',
     'label' => 'Links Bekanntes',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
@@ -627,7 +627,7 @@ function _wizard_installed_instances() {
     ),
     'field_name' => 'field_hyp_2_links',
     'label' => 'Links Neues',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
@@ -769,7 +769,7 @@ function _wizard_installed_instances() {
     ),
     'field_name' => 'field_hyp_3_links',
     'label' => 'Links Irritation',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
@@ -948,6 +948,23 @@ function _wizard_installed_instances() {
   t('Titel Irritation');
 
   return $field_instances;
+}
+
+
+/**
+ * Updates hypothesis field settings (make links optional).
+ *
+ * @throws \FieldException
+ */
+function wizard_update_7100() {
+
+  $fieldNames = array('field_hyp_1_links', 'field_hyp_2_links', 'field_hyp_3_links');
+
+  foreach ($fieldNames as $fieldName) {
+    $fieldInstanceInfo = field_info_instance('node', $fieldName, 'hypothesis');
+    $fieldInstanceInfo['required'] = FALSE;
+    field_update_instance($fieldInstanceInfo);
+  }
 }
 
 

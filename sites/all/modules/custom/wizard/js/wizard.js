@@ -23,7 +23,7 @@
   });
 
   // load qtip2 tooltips for hypothesis fields
-  $('.hypothesis').each(function() {
+  $('.hypothesis.has-tooltip').each(function() {
     $(this).qtip({
       content: {
         text: $(this).find('.tooltip'),

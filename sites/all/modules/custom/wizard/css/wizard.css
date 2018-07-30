@@ -12,7 +12,7 @@
 /* =============================================================================
  *   Hypothesis fieldsets
  * ========================================================================== */
-fieldset.hypothesis {
+fieldset.hypothesis.has-tooltip {
     cursor: pointer;
 }
 
@@ -38,6 +38,14 @@ fieldset.hypothesis .tooltip {
 
 fieldset {
     margin-bottom: 1em;
+}
+
+.refLink {
+    text-decoration: none;
+}
+
+.refLink:hover {
+    color: unset;
 }
 
 

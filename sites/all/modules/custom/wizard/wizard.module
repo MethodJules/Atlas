@@ -104,25 +104,6 @@ function wizard_preprocess_node(&$variables) {
         // content will be printed separately in node--hypothesis.tpl.php
         // do not render the separate fields, they are build and rendered as fieldsets later
         hide($variables['content'][$key]);
-      } else if ($key === 'field_references') {
-
-        // add the referenced biblio/publication node ID to the href link (used for mouse-over preview popup)
-        foreach ($field['#items'] as $refKey => $reference) {
-          $link = $field[$refKey]['#markup'];
-          $nid = $reference['target_id'];
-
-          /*
-          // theme publication reference link in citation style (IEEE, APA, MLE, ...)
-          $node = node_load($nid);
-          $style = 'ieee.csl';
-          $base  = variable_get('biblio_base', 'biblio');
-          $link = theme('biblio_style', array('node' => $node, 'base' => $base, 'style_name' => $style));
-
-          // depending on citation style adjust $linkWithNid otherwise all links (title, authors, ...) will get tooltip
-          */
-          $linkWithNid = str_replace('<a', '<a class="referencelink" id=' . $nid, $link);
-          $variables['content'][$key][$refKey]['#markup'] = $linkWithNid;
-        }
       }
     }
 
@@ -154,11 +135,15 @@ function wizard_preprocess_node(&$variables) {
       );
 
       // add fieldset tooltip (link titles with content type icon)
-      $fieldset['element']['#value'] .= '<div class="tooltip">';
-      foreach ($nodeTooltips as $tooltip) {
-        $fieldset['element']['#value'] .= '<div class="icon ' . $tooltip['type'] . '">' . check_plain($tooltip['title']) .'</div>';
+      if (!empty($nodeTooltips)) {
+        $fieldset['element']['#attributes']['class'][] = 'has-tooltip';
+
+        $fieldset['element']['#value'] .= '<div class="tooltip">';
+        foreach ($nodeTooltips as $tooltip) {
+          $fieldset['element']['#value'] .= '<div class="icon ' . $tooltip['type'] . '">' . check_plain($tooltip['title']) .'</div>';
+        }
+        $fieldset['element']['#value'] .=  '</div>';
       }
-      $fieldset['element']['#value'] .=  '</div>';
 
       // content will be printed separately in node--hypothesis.tpl.php
       $variables['content']['fieldsets'][] = $fieldset;
@@ -211,4 +196,147 @@ function _wizard_add_css_after_build($form, &$form_state) {
  */
 function wizard_views_api($module = NULL, $api = NULL) {
   return array("api" => "3.0");
+}
+
+
+/**
+ * Returns the node ID of the publication matching the given citekey.
+ *
+ * @param string $citekey
+ *   The citation key of the publication.
+ *
+ * @return int
+ *   -1 for invalid citekey, else the node ID.
+ */
+function wizard_citekey_get_nid($citekey) {
+
+  $query = 'SELECT nid FROM {biblio} WHERE biblio_citekey = :key';
+  $nid = db_query($query, array(':key' => $citekey))->fetchField();
+
+  if ($nid) {
+    return $nid;
+  }
+  return -1;
+}
+
+
+/**
+ * Adds tooltip (publication preview) to a bibliographic reference.
+ *
+ * @param string $reference
+ *   HTML string of a bibliographic reference.
+ * @param string $citekey
+ *   The citekey of the referenced publication.
+ *
+ * @return string
+ *   HTML string with added tooltip.
+ */
+function wizard_add_reference_tooltip($html, $citekey) {
+  $htmlWithTooltip = '';
+
+  // add preview tooltip only to the title link
+  $pattern = '|<span class=\"biblio\-title\"\s>(.*?)</span>|s';
+  $nid = wizard_citekey_get_nid($citekey);
+  $replace = '<span class="referencelink" id=' . $nid . '>$0</span>';
+
+  $htmlWithTooltip = preg_replace($pattern, $replace, $html);
+
+  return $htmlWithTooltip;
+}
+
+
+/**
+ * Builds an ordered list of references.
+ *
+ * @param array $references
+ *   Array of citekeys.
+ *
+ * @return array
+ *   Renderable array of an ordered list of references.
+ */
+function wizard_get_references_form($references) {
+  $form = array();
+
+  if (!empty($references)) {
+
+    $listItems = array();
+    foreach($references as $key => $ref) {
+      $refNr = $key +1;
+      $citeKeyHtml = _biblio_citekey_print($ref);
+      $citeKeyHtml = wizard_add_reference_tooltip($citeKeyHtml, $ref);
+
+      $listItems[] = '<span id="reference' . $refNr . '"><a name="ref' . $refNr . '">' . $citeKeyHtml . ' </a></span>';
+    }
+
+    $form = array (
+      '#title' => t('References'),
+      '#theme' => 'item_list',
+      '#items' => $listItems,
+      '#type' => 'ol',
+      '#attributes' => array('class' => 'references'),
+      '#weight' => 50,
+    );
+  }
+
+  return $form;
+}
+
+
+/**
+ * Implements hook_node_view().
+ * Adds bibliographic references to a node. All text fields of the defined content types are scanned
+ * for citation keys [bib]<citation key>[/bib]. Found keys are replaced and point to the bibliographic
+ * references at the end of the node.
+ * Related to biblio.module that only creates references for every single text field separately.
+ */
+function wizard_node_view($node, $view_mode, $langcode) {
+  // define all content types that should be scanned for references
+  $contentTypes = array('hypothesis');
+
+  if (in_array($node->type, $contentTypes)) {
+
+    // define all field types that should be scanned for references
+    $fieldTypeText = array('text', 'text_long', 'text_with_summary');
+
+    // define supported format [bib]<citekey>[/bib]
+    $pattern = '|\[bib](.*?)\[/bib]|s';
+    $refClass = 'refLink';
+
+    // stores citekeys of all the node's text fields in the order they appeared
+    $references = array();
+
+    foreach (element_children($node->content, TRUE) as $fieldName) {
+      $field = $node->content[$fieldName];
+      if (in_array($field['#field_type'], $fieldTypeText, TRUE)) {
+
+        // look for citekeys in the field's text
+        $text = $field['#items'][0]['safe_value'];
+        $matches = array();
+        preg_match_all($pattern, $text, $matches);
+
+        // replace found citekeys
+        if (!empty($matches[0])) {
+          $references = array_merge($references ,$matches[1]);
+          $references = array_values(array_unique($references));
+
+          foreach ($matches[1] as $key => $citekey) {
+            $refNr = array_search($citekey, $references) + 1;
+
+            // the numbered element that will replace the found [bib]...[/bib]
+            $refLink = '<a class="'.$refClass.'" href="#ref' . $refNr . '" title="Reference ' . $refNr . '">[' . $refNr . ']</a>';
+            $text = str_replace($matches[0][$key], $refLink, $text);
+          }
+        }
+
+        $node->content[$fieldName]['#items'][0]['safe_value'] = $text;
+
+        // 'text_long' and 'text' field type do use save_value for display?!
+        if ($field['#field_type'] === 'text_long' || $field['#field_type'] === 'text') {
+          $node->content[$fieldName][0]['#markup'] = $text;
+        }
+      }
+    }
+
+    $node->content['field_references'] = wizard_get_references_form($references);
+  }
 }

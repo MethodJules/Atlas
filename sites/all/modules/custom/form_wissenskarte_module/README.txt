@@ -9,12 +9,16 @@ REQUIREMENTS
 
 This module requires the following modules:
 
- * Morphsearch: To link drawn knowledge map areas to your portal's content.
+ * views, entityreference_view_widget: To select portal content in a modal window for knowledge map areas.
+ * Morphsearch, morphsearch_searchresults: To link drawn knowledge map areas to your portal's content.
+     Module works without these but they are added by default for maximum knowledge map features.
 
 
 RECOMMENDED MODULES
 -------------------
-
+ * jq_maphighlight: Adds visual highlighting options.
+ * imagemap_resizer: By default areas are saved based the the image's original size. If the image is scaled on your site
+     you need this module to resize the drawn areas to the image size (responsiveness).
  * Entityreference (https://www.drupal.org/project/entityreference): To attach morphological tags of the morphsearch
     module to the knowledge map.
  * Fivestar (https://www.drupal.org/project/fivestar): To rate knowledge maps by stars in comments.

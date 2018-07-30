@@ -28,3 +28,8 @@
 #modal-content .widget-type {
     width: 1em;
 }
+
+/* TODO remove? use to to find/insert references into textfields? */
+#edit-field-references {
+    display: none;
+}
