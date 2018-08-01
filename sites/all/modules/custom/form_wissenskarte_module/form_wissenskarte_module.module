@@ -56,7 +56,7 @@ function form_wissenskarte_module_preprocess_page(&$vars) {
     drupal_add_css(drupal_get_path('module', 'form_wissenskarte_module') . "/css/morphmapping.css");
     drupal_add_css(drupal_get_path('module', 'form_wissenskarte_module') . "/css/jquery.qtip.css");
 
-    $pathEdit = 'node/*/edit';
+    $pathEdit = 'node/*/edit*';
     $pathClone = 'node/*/clone/confirm';
     $isPathEdit = drupal_match_path(current_path(), $pathEdit);
     $isPathClone = drupal_match_path(current_path(), $pathClone);
@@ -81,7 +81,7 @@ function form_wissenskarte_module_preprocess_page(&$vars) {
  */
 function form_wissenskarte_module_field_widget_image_image_form_alter(&$element, &$form_state, $context) {
   // load only for type = "wissenskarte"
-  $pathAddWissenskarte = 'node/add/wissenskarte';
+  $pathAddWissenskarte = 'node/add/wissenskarte*';
   $isPathAddWissenskarte = drupal_match_path(current_path(), $pathAddWissenskarte);
 
   if ($isPathAddWissenskarte) {

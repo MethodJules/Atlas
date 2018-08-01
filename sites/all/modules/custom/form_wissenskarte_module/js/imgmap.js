@@ -1243,6 +1243,7 @@ imgmap.prototype.initArea = function(id, shape) {
 	this.areas[id].aid       = id;
 	this.areas[id].shape     = shape;
 	this.areas[id].ahref     = '';
+  this.areas[id].description = '';
 	this.areas[id].atitle    = '';
 	this.areas[id].aalt      = '';
 	this.areas[id].atarget   = ''; // '_self';

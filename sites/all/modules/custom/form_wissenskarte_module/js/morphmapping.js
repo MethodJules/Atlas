@@ -171,6 +171,8 @@ function instanciateAreaDescription(){
 	var guiArea = $('#edit-field-wk-bild');
 	var textHideAreas = Drupal.t("Hide areas");
 	var textShowAreas = Drupal.t("Show areas");
+  guiArea.prepend('<div id="maparea-desciption"><textarea class="form-textarea" id="img_description" name="img_description" cols="160" rows="1" placeholder="Beschreibung für gezeichneten Bereich..."></textarea></div>');
+  $('#img_description').keyup(Indeko.MorphBox.getSelectedValuesFromMorphBox);
 
 	guiArea.prepend('<span class="inline-block"><div id="addAreaButton" class="addAreaButton" value="" />' +
     				'<div id="button-hide" class="area-show">' + textHideAreas + '</div></span>');
@@ -424,7 +426,9 @@ function gui_addArea(id) {
 
 	//hook more event handlers to individual inputs
 	myimgmap.addEvent($(props[id]).find('input[name=img_alt]')[0],  'change', gui_input_change);
-	l_oSelect.change(function(event) {gui_input_change(event)});
+  myimgmap.addEvent($('img_description'),  'change', gui_input_change);
+
+  l_oSelect.change(function(event) {gui_input_change(event)});
 	/*if (myimgmap.isSafari) {
 	 //need these for safari
 	 myimgmap.addEvent(props[id].getElementsByTagName('select')[0], 'change', gui_row_click);
@@ -594,7 +598,8 @@ function gui_input_change(e) {
 	if (obj.name == 'img_href')        {myimgmap.areas[id].ahref   = obj.value;}
 	else if (obj.name == 'img_alt')    {myimgmap.areas[id].aalt    = obj.value; myimgmap.areas[id].atitle  = obj.value;}
 	else if (obj.name == 'img_title')  {myimgmap.areas[id].atitle  = obj.value;}
-	else if (obj.name == 'img_target') {myimgmap.areas[id].atarget = obj.value;}
+  else if (obj.name == 'img_description')  {myimgmap.areas[id].description  = obj.value;}
+  else if (obj.name == 'img_target') {myimgmap.areas[id].atarget = obj.value;}
 	else if (obj.name == 'img_shape') {
 		if (myimgmap.areas[id].shape != obj.value && myimgmap.areas[id].shape != 'undefined') {
 			//shape changed, adjust coords intelligently inside _normCoords
@@ -667,11 +672,16 @@ function gui_updateArea(id) {
 	// add title to area if the user already entered a title prior to drawing an area
 	if (props[id]) {
 		var areaTitle = $(props[id]).find('input[name=img_alt]').val();
+		var areaDescription = $('img_description').val();
 
 		if (!$.isEmptyObject(areaTitle)) {
 			myimgmap.areas[id].aalt    = areaTitle;
 			myimgmap.areas[id].atitle  = areaTitle;
 		}
+
+    if (!$.isEmptyObject(areaDescription)) {
+      myimgmap.areas[id].description    = areaDescription;
+    }
 	}
 
 	$('.image-style-wissenkarte').removeClass('addAreaError');
@@ -717,7 +727,9 @@ function gui_statusMessage(str) {
 // todo testing janzen 18.10
 Indeko.MorphBox.update = function(id) {
 	Indeko.MorphBox.reset();
-	if (myimgmap.areas[id] === null || typeof myimgmap.areas[id].json === "undefined") { // TODO
+  $('#img_description').val(myimgmap.areas[myimgmap.currentid].description);
+
+  if (myimgmap.areas[id] === null || typeof myimgmap.areas[id].json === "undefined") { // TODO
 		// areas is not valid
 		return false;
 	}
@@ -770,6 +782,7 @@ Indeko.MorphBox.reset = function() {
 	// clear the url textfield
 	$('#direct-url').val('');
 
+  $('#img_description').val('');
 	// Remove class on morphbox block
     Indeko.MorphBox.element.removeClass('drawfinished');
 };
@@ -840,6 +853,10 @@ Indeko.MorphBox.convertMorphsearch = function() {
 
 // todo testing janzen 18.10
 Indeko.MorphBox.getSelectedValuesFromMorphBox = function(){
+
+	var areaDescription = $('#img_description').val();
+  myimgmap.areas[myimgmap.currentid].description = areaDescription;
+  myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
 
   if ($(Indeko.MorphBox.element) > 0) {
 		// TODO direct url prototype
@@ -1192,6 +1209,7 @@ imgmap.prototype.getMapInnerHTML = function(flags) {
 					' coords="' + coords + '"' +
 					' href="' +	this.areas[i].ahref + '"' +
 					' data-json="' + escapeHtml(this.areas[i].json) + '"' +
+					' data-description="' + escapeHtml(this.areas[i].description) + '"' +
 					' target="' + this.areas[i].atarget + '" />';
 			}
 		}
@@ -1230,7 +1248,7 @@ imgmap.prototype.setMapHTML = function(map) {
 	this.mapname = oMap.name;
 	this.mapid   = oMap.id;
 	var newareas = oMap.getElementsByTagName('area');
-	var shape, coords, href, alt, title, target, id, json;
+	var shape, coords, href, alt, title, target, id, json, desc;
 	for (var i=0, le = newareas.length; i<le; i++) {
 		shape = coords = href = alt = title = target = '';
 
@@ -1272,6 +1290,11 @@ imgmap.prototype.setMapHTML = function(map) {
 		if (json) {
 			this.areas[id].json = json;
 		}
+
+    desc = newareas[i].getAttribute('data-description');
+    if (desc) {
+      this.areas[id].description = desc;
+    }
 
 		target = newareas[i].getAttribute('target');
 		if (target) {target = target.toLowerCase();}
