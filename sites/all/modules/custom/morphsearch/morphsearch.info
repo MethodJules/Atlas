@@ -3,6 +3,7 @@ description = Dynamically creates a search block in the right sidebar (fulltext 
 core = 7.x
 package = Search
 configure = admin/config/search/morphsearch
+version = "7.x-2.0.1"
 
 dependencies[] = libraries
 dependencies[] = jquery_update

@@ -91,7 +91,7 @@ function  initView(ViewMode) {
 			Indeko.ImageMap.hookSaveButton(); 						// attach client side validation to save button
 
 			// converts the standard portal search block to be usable to link content to knowledge maps
-			if ($(Indeko.MorphBox.element) > 0) {
+			if ($(Indeko.MorphBox.element).length > 0) {
         Indeko.MorphBox.convertMorphsearch();
       }
 
@@ -292,7 +292,7 @@ function validateLastArea(){
 		l_oValidationResult.isAreaValid = false;
 	}
 
-  if ($(Indeko.MorphBox.element) > 0) {
+  if ($(Indeko.MorphBox.element).length > 0) {
     /* Check if the drawn area is linked to content on the website. */
     var searchObject = Indeko.Morphsearch.toArray();
     if ($.isEmptyObject(searchObject) && myimgmap.areas[0] !== null) {
@@ -727,14 +727,19 @@ function gui_statusMessage(str) {
 // todo testing janzen 18.10
 Indeko.MorphBox.update = function(id) {
 	Indeko.MorphBox.reset();
-  $('#img_description').val(myimgmap.areas[myimgmap.currentid].description);
+
+	if (myimgmap.areas[myimgmap.currentid] == null) {
+    $('#img_description').val("");
+  } else {
+    $('#img_description').val(myimgmap.areas[myimgmap.currentid].description);
+  }
 
   if (myimgmap.areas[id] === null || typeof myimgmap.areas[id].json === "undefined") { // TODO
 		// areas is not valid
 		return false;
 	}
 
-  if ($(Indeko.MorphBox.element) > 0) {
+  if ($(Indeko.MorphBox.element).length > 0) {
     var jsonString = myimgmap.areas[id].json;
     //jsonString = decodeURI(jsonString);
     var searchObject = JSON.parse(jsonString);
@@ -750,7 +755,7 @@ Indeko.MorphBox.update = function(id) {
  */
 Indeko.MorphBox.selectItems = function() {
 
-  if ($(Indeko.MorphBox.element) > 0) {
+  if ($(Indeko.MorphBox.element).length > 0) {
 		// TODO direct url prototype
     // check if href is a search string or direct url
     var href = myimgmap.areas[myimgmap.currentid].ahref;
@@ -773,7 +778,7 @@ Indeko.MorphBox.selectItems = function() {
  */
 Indeko.MorphBox.reset = function() {
 
-  if ($(Indeko.MorphBox.element) > 0) {
+  if ($(Indeko.MorphBox.element).length > 0) {
     Indeko.Morphsearch.reset();
     Indeko.Morphsearch.elemFulltext.val(''); // ID 34 do not reset fulltext field on reset, so have to do it here
   }
@@ -858,7 +863,7 @@ Indeko.MorphBox.getSelectedValuesFromMorphBox = function(){
   myimgmap.areas[myimgmap.currentid].description = areaDescription;
   myimgmap.fireEvent('onHtmlChanged', myimgmap.getMapHTML());
 
-  if ($(Indeko.MorphBox.element) > 0) {
+  if ($(Indeko.MorphBox.element).length > 0) {
 		// TODO direct url prototype
     // if direct url given ignore search box parameters
     if ($('#direct-url').val().length > 0) {
@@ -960,7 +965,7 @@ Indeko.ImageMap.hookSaveButton = function () {
 			}
 
 			// validate linked content through MorphBox
-      if ($(Indeko.MorphBox.element) > 0) {
+      if ($(Indeko.MorphBox.element).length > 0) {
         if ($.isEmptyObject(area.ahref)) {
           currentCanvasArea.addClass('canvasError');
           Indeko.MorphBox.element.addClass('addAreaError');

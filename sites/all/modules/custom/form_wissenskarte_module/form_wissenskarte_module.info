@@ -2,6 +2,7 @@ name = form_wissenskarte_module
 description = Allows the creation of knowledge maps.
 core = 7.x
 package = Knowledge Map
+version = "7.x-2.0.1"
 
 dependencies[] = morphsearch
 dependencies[] = morphsearch_searchresults
