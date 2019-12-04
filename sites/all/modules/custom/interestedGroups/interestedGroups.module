@@ -5,6 +5,17 @@
  * Date: 20.04.2016
  */
 
+// enter the machine name of the content type users can register for
+variable_set('participationContentType', 'event');
+
+// is the participant a 'user' or a 'group'?
+variable_set('participationLevel', 'group');
+
+// settings for the original interestedGroups functionality
+// with events and participating projects:
+// variable_set('participationContentType', 'event');
+// variable_set('participationLevel', 'group');
+
 function interestedGroups_menu() {
 
     /*
@@ -51,6 +62,16 @@ function interestedGroups_check_current_user_project($eventID) {
     global $user;
     $existent = false;
 
+    if (variable_get('participationLevel') === 'user') {
+      $resultGroups = db_query("SELECT * FROM {interestedGroups} WHERE projectID = :projectID AND eventID = :eventID ",
+        array(":projectID" => $user->uid, ":eventID" => $eventID));
+
+      foreach($resultGroups as $groups) {
+        $existent = true;
+      }
+
+      return $existent;
+    } else {
     //Hole Projekt-ID des angemeldeten Benutzers
     $result = db_query("SELECT DISTINCT verbund.field_verbundprojekt_target_id, abk.field_abk_rzung_projekt_value from {field_data_field_verbundprojekt} as verbund Inner JOIN {field_data_field_abk_rzung_projekt} AS abk ON verbund.field_verbundprojekt_target_id = abk.entity_id WHERE verbund.entity_id = :userID",
         array(":userID" => $user->uid));
@@ -65,6 +86,7 @@ function interestedGroups_check_current_user_project($eventID) {
         }
 
         return $existent;
+      }
     }
 
 }
@@ -75,13 +97,14 @@ function interestedGroups_check_current_user_project($eventID) {
 function interestedGroups_node_view($node, $view_mode, $langcode) {
 
     if(strcmp(drupal_get_path_alias(),"indeko-navi-modell")) {
-        $test = $node->type;
-        if (!strcmp($test, "event")) {
-            $node->content['my_additional_field2'] = array(
-                '#markup' => t(interestedGroups_getInterestedGroups()),
-                '#weight' => 1000,
-            );
-        }}
+      $test = $node->type;
+      if ($node->type === variable_get('participationContentType')) {
+        $node->content['participation_form'] = [
+          '#markup' => t(interestedGroups_getInterestedGroups()),
+          '#weight' => 1000,
+        ];
+      }
+    }
 }
 
 /*
@@ -243,20 +266,29 @@ function interestedGroups_getInterestedGroups() {
         }
       }
 
+      if (variable_get('participationLevel') === 'user') {
+        $tempString .= "<table><th> Teilnehmer </th><th> interessiert </th> <th> nimmt teil </th> ";
 
-      $tempString .= "<table><th> Projekt </th><th> interessiert </th> <th> nimmt teil </th> ";
+      } else {
+        $tempString .= "<table><th> Projekt </th><th> interessiert </th> <th> nimmt teil </th> ";
+      }
 
       /*
        * Für jede Seite außer der Startseite gibt es eine node-ID, daher muss die Startseite rausgenommen werden.
        */
       if (strcmp(drupal_get_path_alias(), "indeko-navi-modell")) {
         $type = $node->type;
-        if (!strcmp($type, "event")) {
+        if (variable_get('participationContentType') === $type) {
           $result = db_query("SELECT * from {interestedGroups} as groups WHERE groups.eventID = :id ", array(":id" => $node->nid));
 
           foreach ($result as $r) {
             $userID = user_load($r->userID);
-            $project = get_project_of_user($userID);
+
+            if (variable_get('participationLevel') === 'user') {
+              $project = $userID->name;
+            } else {
+              $project = get_project_of_user($userID);
+            }
             if ($r->interested == 0) {
               $interested = "Nein";
             }
@@ -274,7 +306,7 @@ function interestedGroups_getInterestedGroups() {
             if ($r->interested == 1 OR $r->accept == 1) {
 
               //$tempString = $tempString . '<tr><td>' . $test->name . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
-              $tempString = $tempString . '<tr><td>' . $project[0] . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
+              $tempString = $tempString . '<tr><td>' . $project . '</td><td>' . $interested . '</td><td>' . $accept . '</td><td>';
             }
           }
 
@@ -307,7 +339,7 @@ function get_project_id_of_user($user) {
  */
 function get_project_name($project_id) {
     $result = db_query("SELECT field_abk_rzung_projekt_value FROM field_data_field_abk_rzung_projekt WHERE entity_id = :id", array(":id" => $project_id));
-    return $result->fetchCol(0);
+    return $result->fetchField(0);
 
 }
 
@@ -329,11 +361,17 @@ function get_project_of_user($user){
 function interestedGroups_get_projectID() {
     global $user;
     $projectID = 0;
-    $result = db_query("SELECT DISTINCT verbund.field_verbundprojekt_target_id, abk.field_abk_rzung_projekt_value from {field_data_field_verbundprojekt} as verbund Inner JOIN {field_data_field_abk_rzung_projekt} AS abk ON verbund.field_verbundprojekt_target_id = abk.entity_id WHERE verbund.entity_id = :userID",
-        array(":userID" => $user->uid));
 
-    foreach($result as $re) {
+    if (variable_get('participationLevel') === 'user') {
+      // use the user ID instead of a project ID
+      $projectID = $user->uid;
+    } else {
+      $result = db_query("SELECT DISTINCT verbund.field_verbundprojekt_target_id, abk.field_abk_rzung_projekt_value from {field_data_field_verbundprojekt} as verbund Inner JOIN {field_data_field_abk_rzung_projekt} AS abk ON verbund.field_verbundprojekt_target_id = abk.entity_id WHERE verbund.entity_id = :userID",
+        [":userID" => $user->uid]);
+
+      foreach ($result as $re) {
         $projectID = $re->field_verbundprojekt_target_id;
+      }
     }
 
     return $projectID;
